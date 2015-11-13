@@ -186,7 +186,7 @@
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.lge.stark.eddard.Application</mainClass>
+							<mainClass>com.lge.stark.eddard.Entrypoint</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -220,7 +220,7 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.2.1</version>
 				<configuration>
-					<mainClass>com.lge.stark.eddard.Application</mainClass>
+					<mainClass>com.lge.stark.eddard.Entrypoint</mainClass>
 				</configuration>
 			</plugin>
 
