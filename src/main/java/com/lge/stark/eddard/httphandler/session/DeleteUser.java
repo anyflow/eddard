@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.httphandler;
+package com.lge.stark.eddard.httphandler.session;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import net.anyflow.menton.example.twitter.Database;
@@ -9,10 +9,10 @@ import net.anyflow.menton.http.RequestHandler;
 /**
  * @author Park Hyunjeong
  */
-@RequestHandler.Handles(paths = { "twitter/tweet" }, httpMethods = { "GET" })
-public class Tweet_Get extends RequestHandler {
+@RequestHandler.Handles(paths = { "session/{sessionId}/user/{userId}" }, httpMethods = { "DELETE" })
+public class DeleteUser extends RequestHandler {
 
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Tweet_Get.class);
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DeleteUser.class);
 
 	@Override
 	public String call() {

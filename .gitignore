@@ -9,6 +9,7 @@
 # directories #
 target/
 logs/
+bin/
 
 # eclipse related #
 .settings
@@ -17,4 +18,5 @@ logs/
 
 #buildinfo
 build.parameters/buildinfo.properties
-/target
+
+**/*.bak

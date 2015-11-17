@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lge.pushmanager.dataaccess.mapper.AppMapper" >
+
+  <resultMap id="BaseResultMap" type="com.lge.pushmanager.model.App" >
+    <id column="APP_ID" property="appId" jdbcType="INTEGER" />
+    <result column="MAX_RECEIVER_COUNT_ON_SENDING" property="maxReceiverCountOnSending" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, name, secret_key, create_date
+  </sql>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    SELECT id, name, secret_key, create
+    FROM session
+    where APP_ID = #{id,jdbcType=INTEGER}
+  </select>
+</mapper>
