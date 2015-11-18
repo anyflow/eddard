@@ -12,7 +12,7 @@ public class DeleteUser extends RequestHandler {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DeleteUser.class);
 
 	@Override
-	public String call() {
+	public String service() {
 		String sessionId = httpRequest().pathParameter("sessionId");
 		String userId = httpRequest().pathParameter("userId");
 

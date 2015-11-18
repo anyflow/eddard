@@ -17,7 +17,7 @@ public class Get extends RequestHandler {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Get.class);
 
 	@Override
-	public String call() {
+	public String service() {
 		String id = httpRequest().pathParameter("sessionId");
 
 		if (id == null) {
