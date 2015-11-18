@@ -10,7 +10,7 @@ public class Entrypoint {
 	private static Entrypoint instance;
 
 	public static Entrypoint instance() {
-		if(instance == null) {
+		if (instance == null) {
 			instance = new Entrypoint();
 		}
 
@@ -19,7 +19,7 @@ public class Entrypoint {
 
 	public static void main(String[] args) {
 		Thread.currentThread().setName("main thread");
-		if(!Entrypoint.instance().start()) {
+		if (!Entrypoint.instance().start()) {
 			System.exit(-1);
 		}
 	}
@@ -28,13 +28,13 @@ public class Entrypoint {
 
 	public boolean start() {
 		try {
-			String log4jFilePath = (new File(Environment.getWorkingPath(Entrypoint.class), Configurator.instance().LOG4J_PROPERTIES_FILE_NAME))
-					.getPath();
+			String log4jFilePath = (new File(Environment.getWorkingPath(Entrypoint.class),
+					Configurator.instance().LOG4J_PROPERTIES_FILE_NAME)).getPath();
 			org.apache.log4j.xml.DOMConfigurator.configure(log4jFilePath);
 
 			logger.info("Starting Eddard...");
 
-			httpServer.start("com.lge.stark.eddard.httphandler");
+			httpServer.start("com.lge.stark.eddard.controller");
 
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 
@@ -44,7 +44,7 @@ public class Entrypoint {
 				}
 			});
 		}
-		catch(Exception e) {
+		catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return false;
 		}
@@ -59,7 +59,7 @@ public class Entrypoint {
 		try {
 			httpServer.shutdown();
 		}
-		catch(Exception e) {
+		catch (Exception e) {
 			logger.debug(e.getMessage(), e);
 		}
 
