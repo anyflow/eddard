@@ -2,7 +2,7 @@ package com.lge.stark.eddard.model;
 
 import java.util.Date;
 
-public class Message extends SessionMembers {
+public class Message extends RoomUserMap {
 	private String id;
 	private String message;
 	private Byte readCount;

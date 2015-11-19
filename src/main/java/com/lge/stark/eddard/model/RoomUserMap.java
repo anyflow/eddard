@@ -2,16 +2,16 @@ package com.lge.stark.eddard.model;
 
 import com.lge.stark.eddard.Jsonizable;
 
-public class SessionMembers extends Jsonizable {
-	private String sessionId;
+public class RoomUserMap extends Jsonizable {
+	private String roomId;
 	private String userId;
 
-	public String getSessionId() {
-		return sessionId;
+	public String getRoomId() {
+		return roomId;
 	}
 
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
+	public void setRoomId(String roomId) {
+		this.roomId = roomId;
 	}
 
 	public String getUserId() {

@@ -1,0 +1,68 @@
+package com.lge.stark.eddard.controller.room;
+
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.google.inject.internal.Lists;
+import com.lge.stark.eddard.Fault;
+import com.lge.stark.eddard.FaultException;
+import com.lge.stark.eddard.business.RoomBiz;
+import com.lge.stark.eddard.model.Room;
+
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.util.CharsetUtil;
+import net.anyflow.menton.http.RequestHandler;
+
+/**
+ * @author Park Hyunjeong
+ */
+@RequestHandler.Handles(paths = { "session" }, httpMethods = { "POST" })
+public class Post extends RequestHandler {
+
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Post.class);
+
+	@Override
+	public String service() {
+		String content = httpRequest().content().toString(CharsetUtil.UTF_8);
+
+		try {
+			JSONObject json = new JSONObject(content);
+
+			String name = json.getString("name");
+			String inviterId = json.getString("invirterId");
+			JSONArray inviteeIdsJson = json.getJSONArray("inviteeIds");
+			String secretKey = json.getString("secretKey");
+
+			List<String> inviteeIds = Lists.newArrayList();
+			for (int i = 0; i < inviteeIdsJson.length(); ++i) {
+				inviteeIds.add(inviteeIdsJson.get(i).toString());
+			}
+
+			Room room = RoomBiz.instance().create(name, inviterId, inviteeIds, secretKey);
+
+			JSONObject ret = new JSONObject();
+
+			ret.put("roomId", room.getId());
+			ret.put("createDate", room.getCreateDate().getTime());
+
+			return ret.toString();
+		}
+		catch (FaultException fe) {
+			logger.error(fe.getMessage(), fe);
+
+			httpResponse().setStatus(fe.fault().httpStatus());
+
+			return fe.fault().getMessage();
+		}
+		catch (JSONException e) {
+			logger.error(e.getMessage(), e);
+
+			httpResponse().setStatus(HttpResponseStatus.BAD_REQUEST);
+
+			return (new Fault("1", "Invalid JSON content")).toJsonString();
+		}
+	}
+}

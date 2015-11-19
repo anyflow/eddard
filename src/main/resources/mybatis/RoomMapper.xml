@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.lge.pushmanager.dataaccess.mapper.AppMapper" >
+<mapper namespace="com.lge.stark.eddard.mybatis.RoomMapper" >
 
-  <resultMap id="BaseResultMap" type="com.lge.stark.eddard.model.Session" >
-    <id column="id" property="appId" jdbcType="VARCHAR" />
+  <resultMap id="BaseResultMap" type="com.lge.stark.eddard.model.Room" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
@@ -16,12 +16,12 @@
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     SELECT id, name, secret_key, create
-    FROM session
+    FROM room
     where id = #{id,jdbcType=VARCHAR}
   </select>
   
-  <insert id="insertSelective" parameterType="com.lge.stark.eddard.Session" >
-    INSERT INTO session
+  <insert id="insertSelective" parameterType="com.lge.stark.eddard.model.Room" >
+    INSERT INTO room
     <trim prefix="(" suffix=")" suffixOverrides="," >
         id, name, secret_key, create_date
     </trim>
@@ -42,12 +42,12 @@
   </insert>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    DELETE FROM session
+    DELETE FROM room
     WHERE id = #{id,jdbcType=VARCHAR}
   </delete>
   
-  <update id="updateByPrimaryKeySelective" parameterType="com.lge.stark.eddard.model.Session" >
-    UPDATE session
+  <update id="updateByPrimaryKeySelective" parameterType="com.lge.stark.eddard.model.Room" >
+    UPDATE room
     <set >
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},

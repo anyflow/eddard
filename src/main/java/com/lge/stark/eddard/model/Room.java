@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.lge.stark.eddard.Jsonizable;
 
-public class Session extends Jsonizable {
+public class Room extends Jsonizable {
 
 	private String id;
 	private String name;

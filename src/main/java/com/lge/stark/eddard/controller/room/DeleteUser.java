@@ -1,11 +1,11 @@
-package com.lge.stark.eddard.controller.session;
+package com.lge.stark.eddard.controller.room;
 
 import net.anyflow.menton.http.RequestHandler;
 
 /**
  * @author Park Hyunjeong
  */
-@RequestHandler.Handles(paths = { "session/{sessionId}/user/{userId}" }, httpMethods = { "DELETE" })
+@RequestHandler.Handles(paths = { "room/{roomId}/user/{userId}" }, httpMethods = { "DELETE" })
 public class DeleteUser extends RequestHandler {
 
 	@SuppressWarnings("unused")
@@ -13,9 +13,9 @@ public class DeleteUser extends RequestHandler {
 
 	@Override
 	public String service() {
-		String sessionId = httpRequest().pathParameter("sessionId");
+		String roomId = httpRequest().pathParameter("roomId");
 		String userId = httpRequest().pathParameter("userId");
 
-		return sessionId + userId;
+		return roomId + userId;
 	}
 }
