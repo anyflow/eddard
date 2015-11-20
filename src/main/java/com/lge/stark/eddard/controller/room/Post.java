@@ -10,15 +10,11 @@ import com.google.inject.internal.Lists;
 import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.business.RoomBiz;
-import com.lge.stark.eddard.model.Room;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import net.anyflow.menton.http.RequestHandler;
 
-/**
- * @author Park Hyunjeong
- */
 @RequestHandler.Handles(paths = { "session" }, httpMethods = { "POST" })
 public class Post extends RequestHandler {
 
@@ -35,18 +31,21 @@ public class Post extends RequestHandler {
 			String inviterId = json.getString("invirterId");
 			JSONArray inviteeIdsJson = json.getJSONArray("inviteeIds");
 			String secretKey = json.getString("secretKey");
+			String message = json.getString("message");
 
 			List<String> inviteeIds = Lists.newArrayList();
 			for (int i = 0; i < inviteeIdsJson.length(); ++i) {
 				inviteeIds.add(inviteeIdsJson.get(i).toString());
 			}
 
-			Room room = RoomBiz.instance().create(name, inviterId, inviteeIds, secretKey);
+			RoomBiz.RoomMessage roomMessage = RoomBiz.instance().create(name, inviterId, inviteeIds, secretKey,
+					message);
 
 			JSONObject ret = new JSONObject();
 
-			ret.put("roomId", room.getId());
-			ret.put("createDate", room.getCreateDate().getTime());
+			ret.put("roomId", roomMessage.room.getId());
+			ret.put("messageId", roomMessage.message.getId());
+			ret.put("createDate", roomMessage.room.getCreateDate().getTime());
 
 			return ret.toString();
 		}

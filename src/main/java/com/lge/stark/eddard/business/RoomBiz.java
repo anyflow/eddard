@@ -6,8 +6,14 @@ import java.util.List;
 import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.IdGenerator;
+import com.lge.stark.eddard.gateway.DeviceGateway;
+import com.lge.stark.eddard.gateway.PushGateway;
+import com.lge.stark.eddard.model.Device;
+import com.lge.stark.eddard.model.Message;
 import com.lge.stark.eddard.model.Room;
+import com.lge.stark.eddard.model.RoomUserMap;
 import com.lge.stark.eddard.mybatis.RoomMapper;
+import com.lge.stark.eddard.mybatis.RoomUserMapMapper;
 import com.lge.stark.eddard.mybatis.SqlConnector;
 import com.lge.stark.eddard.mybatis.SqlSessionEx;
 
@@ -43,28 +49,58 @@ public class RoomBiz {
 		}
 	}
 
-	public Room create(String name, String inviterId, List<String> inviteeIds, String secretKey) throws FaultException {
+	public class RoomMessage {
+		public Room room;
+		public Message message;
+
+		protected RoomMessage(Room room, Message message) {
+			this.room = room;
+			this.message = message;
+		}
+	}
+
+	public RoomMessage create(String name, String inviterId, List<String> inviteeIds, String secretKey, String message)
+			throws FaultException {
+
 		SqlSessionEx session = SqlConnector.openSession(false);
 
 		try {
+			if (session.getMapper(RoomMapper.class).selectByPrimaryKey(
+					inviterId) == null) { throw new FaultException(new Fault("4", "Invalid Inviter ID")); }
 
-			Room ret = new Room();
+			Date now = new Date();
 
-			ret.setId(IdGenerator.newId());
-			ret.setName(name);
-			ret.setSecretKey(secretKey);
-			ret.setCreateDate(new Date());
+			Room room = new Room();
 
-			// TODO user ID validation.
+			room.setId(IdGenerator.newId());
+			room.setName(name);
+			room.setSecretKey(secretKey);
+			room.setCreateDate(now);
 
-			if (session.getMapper(RoomMapper.class).insertSelective(ret) <= 0) { throw new FaultException(new Fault("3",
-					"Unknown DB error occured : room creation failed.", HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
+			if (session.getMapper(RoomMapper.class)
+					.insertSelective(room) <= 0) { throw new FaultException(
+							new Fault("3", "Unknown DB error occured : room creation failed.",
+									HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
 
-			// TODO insert RoomUserMapper items
+			if (session.getMapper(RoomUserMapMapper.class)
+					.insert(new RoomUserMap(room.getId(), inviterId)) <= 0) { throw new FaultException(
+							new Fault("3", "Unknown DB error occured : room creation failed.",
+									HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
+
+			Message msg = MessageBiz.instance().create(session, room.getId(), message, inviterId, inviteeIds.size());
 
 			session.commit();
 
-			return ret;
+			for (String inviteeId : inviteeIds) {
+				Device device = DeviceGateway.instance().getLogined(inviteeId);
+				if (device == null) {
+					continue;
+				}
+
+				PushGateway.instance().sendMessage(device.getPushType(), device.getReceiverId(), message);
+			}
+
+			return new RoomMessage(room, msg);
 		}
 		finally {
 			session.close();
