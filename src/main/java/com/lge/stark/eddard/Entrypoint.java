@@ -41,8 +41,6 @@ public class Entrypoint {
 
 			logger.info("Starting Eddard...");
 
-			logger.info("log4FilePath : {}", log4jFilePath);
-
 			httpServer.start("com.lge.stark.eddard.controller");
 
 			Runtime.getRuntime().addShutdownHook(new Thread() {
