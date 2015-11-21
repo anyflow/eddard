@@ -33,7 +33,7 @@ public class MessageBiz {
 		ret.setReadCount(readCount);
 		ret.setRoomId(roomId);
 
-		session.getMapper(MessageMapper.class).insert(ret);
+		session.getMapper(MessageMapper.class).insertSelective(ret);
 
 		return ret;
 	}

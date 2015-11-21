@@ -32,9 +32,8 @@
 	</environments>
 
 	<mappers>
-		<mapper resource="mybatis/SessionMapper.xml" />
-		<mapper resource="mybatis/UserMapper.xml" />
-		<mapper resource="mybatis/SessionMemberMapper.xml" />
+		<mapper resource="mybatis/RoomMapper.xml" />
+		<mapper resource="mybatis/RoomUserMapMapper.xml" />
         <mapper resource="mybatis/MessageMapper.xml" />
 	</mappers>
 </configuration>

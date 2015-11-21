@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lge.stark.eddard.mybatis.MessageMapper" >
+
+  <resultMap id="BaseResultMap" type="com.lge.stark.eddard.model.Message" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="room_id" property="roomId" jdbcType="VARCHAR" />
+    <result column="creator_id" property="creatorId" jdbcType="VARCHAR" />
+    <result column="message" property="message" jdbcType="VARCHAR" />
+    <result column="read_count" property="readCount" jdbcType="TINYINT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, room_id, creator_id, message, read_count, create_date
+  </sql>
+  
+  <insert id="insertSelective" parameterType="com.lge.stark.eddard.model.Message" >
+    INSERT INTO message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id, room_id, creator_id, message, read_count, create_date
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="roomId != null" >
+        #{roomId,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorId != null" >
+        #{creatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null" >
+        #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="readCount != null" >
+        #{readCount,jdbcType=TINYINT},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>  
+</mapper>

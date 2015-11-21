@@ -18,9 +18,11 @@ import org.junit.runners.MethodSorters;
 import com.jayway.jsonpath.JsonPath;
 import com.lge.stark.eddard.ApiTestCase;
 
+import io.netty.handler.codec.http.HttpHeaders.Names;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import net.anyflow.menton.http.HttpClient;
+import net.anyflow.menton.http.HttpConstants.HeaderValues;
 import net.anyflow.menton.http.HttpResponse;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -38,11 +40,10 @@ public class RoomTest extends ApiTestCase {
 
 	final String address = "http://localhost:8080/room";
 
-	@SuppressWarnings("unused")
-	private String roomId;
+	private static String roomId;
 
 	@Test
-	public void test1_POST() throws UnsupportedOperationException, URISyntaxException, JSONException {
+	public void test1_Post() throws UnsupportedOperationException, URISyntaxException, JSONException {
 
 		JSONObject param = new JSONObject();
 
@@ -50,8 +51,11 @@ public class RoomTest extends ApiTestCase {
 		param.put("inviterId", "aaa");
 		param.put("inviteeIds", new JSONArray());
 		param.put("secretKey", "sampleSecretKey");
+		param.put("message", "test message");
 
 		HttpClient client = new HttpClient(address);
+
+		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 		client.httpRequest().setContent(param.toString());
 
 		HttpResponse response = client.post();
@@ -63,5 +67,21 @@ public class RoomTest extends ApiTestCase {
 		assertThat(content, containsString("roomId"));
 
 		roomId = JsonPath.read(content, "$.roomId");
+	}
+
+	@Test
+	public void test2_Get() throws UnsupportedOperationException, URISyntaxException, JSONException {
+
+		HttpClient client = new HttpClient(address + "/" + roomId);
+
+		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
+
+		HttpResponse response = client.get();
+
+		assertThat(response.getStatus(), is(HttpResponseStatus.OK));
+
+		String content = response.content().toString(CharsetUtil.UTF_8);
+
+		assertThat(content, containsString("createDate"));
 	}
 }

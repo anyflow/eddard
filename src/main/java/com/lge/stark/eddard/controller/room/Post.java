@@ -15,7 +15,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import net.anyflow.menton.http.RequestHandler;
 
-@RequestHandler.Handles(paths = { "session" }, httpMethods = { "POST" })
+@RequestHandler.Handles(paths = { "room" }, httpMethods = { "POST" })
 public class Post extends RequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Post.class);
@@ -28,7 +28,7 @@ public class Post extends RequestHandler {
 			JSONObject json = new JSONObject(content);
 
 			String name = json.getString("name");
-			String inviterId = json.getString("invirterId");
+			String inviterId = json.getString("inviterId");
 			JSONArray inviteeIdsJson = json.getJSONArray("inviteeIds");
 			String secretKey = json.getString("secretKey");
 			String message = json.getString("message");

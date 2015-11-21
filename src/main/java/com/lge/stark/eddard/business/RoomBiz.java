@@ -21,7 +21,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 
 public class RoomBiz {
 
-	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RoomBiz.class);
 
 	private static RoomBiz instance;
@@ -65,17 +64,14 @@ public class RoomBiz {
 		SqlSessionEx session = SqlConnector.openSession(false);
 
 		try {
-			if (session.getMapper(RoomMapper.class).selectByPrimaryKey(
-					inviterId) == null) { throw new FaultException(new Fault("4", "Invalid Inviter ID")); }
-
-			Date now = new Date();
-
 			Room room = new Room();
 
 			room.setId(IdGenerator.newId());
 			room.setName(name);
 			room.setSecretKey(secretKey);
-			room.setCreateDate(now);
+			room.setCreateDate(new Date());
+
+			logger.debug("id : {}", room.getId());
 
 			if (session.getMapper(RoomMapper.class)
 					.insertSelective(room) <= 0) { throw new FaultException(

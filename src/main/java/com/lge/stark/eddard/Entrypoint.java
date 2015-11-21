@@ -1,6 +1,7 @@
 package com.lge.stark.eddard;
 
 import java.io.File;
+import java.io.FileReader;
 
 import net.anyflow.menton.http.HttpServer;
 
@@ -30,9 +31,17 @@ public class Entrypoint {
 		try {
 			String log4jFilePath = (new File(Environment.getWorkingPath(Entrypoint.class),
 					Configurator.instance().LOG4J_PROPERTIES_FILE_NAME)).getPath();
+
 			org.apache.log4j.xml.DOMConfigurator.configure(log4jFilePath);
 
+			String mentonPropFilePath = Environment.getWorkingPath(Entrypoint.class) + "/"
+					+ Configurator.instance().APPLICATION_PROPERTIES_FILE_NAME;
+
+			net.anyflow.menton.Configurator.instance().initialize(new FileReader(mentonPropFilePath));
+
 			logger.info("Starting Eddard...");
+
+			logger.info("log4FilePath : {}", log4jFilePath);
 
 			httpServer.start("com.lge.stark.eddard.controller");
 
