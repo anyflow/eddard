@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.business;
+package com.lge.stark.eddard.controller;
 
 import java.util.Date;
 
@@ -7,16 +7,16 @@ import com.lge.stark.eddard.model.Message;
 import com.lge.stark.eddard.mybatis.MessageMapper;
 import com.lge.stark.eddard.mybatis.SqlSessionEx;
 
-public class MessageBiz {
+public class MessageController {
 
 	@SuppressWarnings("unused")
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MessageBiz.class);
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MessageController.class);
 
-	private static MessageBiz instance;
+	private static MessageController instance;
 
-	public static MessageBiz instance() {
+	public static MessageController instance() {
 		if (instance == null) {
-			instance = new MessageBiz();
+			instance = new MessageController();
 		}
 
 		return instance;

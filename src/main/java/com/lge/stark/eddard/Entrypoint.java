@@ -20,6 +20,7 @@ public class Entrypoint {
 
 	public static void main(String[] args) {
 		Thread.currentThread().setName("main thread");
+
 		if (!Entrypoint.instance().start()) {
 			System.exit(-1);
 		}
@@ -41,7 +42,7 @@ public class Entrypoint {
 
 			logger.info("Starting Eddard...");
 
-			httpServer.start("com.lge.stark.eddard.controller");
+			httpServer.start("com.lge.stark.eddard.httphandler");
 
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 

@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.business;
+package com.lge.stark.eddard.controller;
 
 import java.util.Date;
 import java.util.List;
@@ -19,15 +19,15 @@ import com.lge.stark.eddard.mybatis.SqlSessionEx;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 
-public class RoomBiz {
+public class RoomController {
 
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RoomBiz.class);
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RoomController.class);
 
-	private static RoomBiz instance;
+	private static RoomController instance;
 
-	public static RoomBiz instance() {
+	public static RoomController instance() {
 		if (instance == null) {
-			instance = new RoomBiz();
+			instance = new RoomController();
 		}
 
 		return instance;
@@ -83,7 +83,7 @@ public class RoomBiz {
 							new Fault("3", "Unknown DB error occured : room creation failed.",
 									HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
 
-			Message msg = MessageBiz.instance().create(session, room.getId(), message, inviterId, inviteeIds.size());
+			Message msg = MessageController.instance().create(session, room.getId(), message, inviterId, inviteeIds.size());
 
 			session.commit();
 

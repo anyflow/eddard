@@ -1,8 +1,8 @@
-package com.lge.stark.eddard.controller.room;
+package com.lge.stark.eddard.httphandler.room;
 
 import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
-import com.lge.stark.eddard.business.RoomBiz;
+import com.lge.stark.eddard.controller.RoomController;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import net.anyflow.menton.http.RequestHandler;
@@ -25,7 +25,7 @@ public class Get extends RequestHandler {
 				return (new Fault("1", "Invalid ID")).toJsonString();
 			}
 
-			return RoomBiz.instance().get(id).toJsonString();
+			return RoomController.instance().get(id).toJsonString();
 		}
 		catch (FaultException fe) {
 			logger.error(fe.getMessage(), fe);

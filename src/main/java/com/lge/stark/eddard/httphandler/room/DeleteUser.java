@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.controller.room;
+package com.lge.stark.eddard.httphandler.room;
 
 import net.anyflow.menton.http.RequestHandler;
 

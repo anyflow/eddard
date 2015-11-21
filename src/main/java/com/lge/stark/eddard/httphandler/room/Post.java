@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.controller.room;
+package com.lge.stark.eddard.httphandler.room;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import com.google.inject.internal.Lists;
 import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
-import com.lge.stark.eddard.business.RoomBiz;
+import com.lge.stark.eddard.controller.RoomController;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
@@ -38,7 +38,7 @@ public class Post extends RequestHandler {
 				inviteeIds.add(inviteeIdsJson.get(i).toString());
 			}
 
-			RoomBiz.RoomMessage roomMessage = RoomBiz.instance().create(name, inviterId, inviteeIds, secretKey,
+			RoomController.RoomMessage roomMessage = RoomController.instance().create(name, inviterId, inviteeIds, secretKey,
 					message);
 
 			JSONObject ret = new JSONObject();
