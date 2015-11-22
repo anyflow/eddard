@@ -104,6 +104,11 @@ public class RoomController {
 					continue;
 				}
 
+				if (PushGateway.instance().sendMessage(activeDevice.getType(), activeDevice.getReceiverId(),
+						message) == false) {
+					continue;
+				}
+
 				MessageStatus ms = new MessageStatus();
 
 				ms.setMessageId(msg.getId());
@@ -111,21 +116,21 @@ public class RoomController {
 				ms.setStatus(MessageStatus.Status.PEND);
 				ms.setCreateDate(new Date());
 
-				if (session.getMapper(MessageStatusMapper.class)
-						.insert(ms) <= 0) { throw new FaultException(
-								new Fault("3", "Unknown DB error occured : MessageStatus creation failed.",
-										HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
+				if (session.getMapper(MessageStatusMapper.class).insert(ms) <= 0) {
+					logger.error("Unknown DB error occured : MessageStatus creation failed.");
+					continue;
+				}
 
 				msg.setUnreadCount(msg.getUnreadCount() + 1);
-
-				PushGateway.instance().sendMessage(activeDevice.getType(), activeDevice.getReceiverId(), message);
 			}
 
 			session.commit();
 
 			return new RoomMessage(room, msg);
 		}
-		finally {
+		finally
+
+		{
 			session.close();
 		}
 	}

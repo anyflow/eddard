@@ -3,8 +3,6 @@ package com.lge.stark.eddard.controller;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.model.Device;
@@ -30,7 +28,13 @@ public class DeviceController {
 	}
 
 	public List<Device> get(List<String> deviceIds) {
-		throw new NotImplementedException("");
+		SqlSessionEx session = SqlConnector.openSession(true);
+		try {
+			return session.getMapper(DeviceMapper.class).selectIn(deviceIds);
+		}
+		finally {
+			session.close();
+		}
 	}
 
 	public void create(String deviceId, String receiverId, Device.PushType type, boolean isActive)

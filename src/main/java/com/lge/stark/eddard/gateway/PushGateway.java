@@ -1,7 +1,5 @@
 package com.lge.stark.eddard.gateway;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import com.lge.stark.eddard.model.Device;
 
 public class PushGateway {
@@ -19,7 +17,8 @@ public class PushGateway {
 		return instance;
 	}
 
-	public void sendMessage(Device.PushType pushType, String receiverId, String message) {
-		throw new NotImplementedException("");
+	public boolean sendMessage(Device.PushType pushType, String receiverId, String message) {
+		// throw new NotImplementedException("");
+		return true;
 	}
 }

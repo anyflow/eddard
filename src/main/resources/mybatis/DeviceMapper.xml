@@ -15,6 +15,16 @@
     id, type, is_active, receiver_id, create_date
   </sql>
 
+  <select id="selectIn" resultType="com.lge.stark.eddard.model.Device" >
+   SELECT 	id, type, is_active, receiver_id, create_date
+   FROM		device
+   WHERE 	1=1
+   AND 		id IN
+   <foreach collection="list" item="element" index="index" open="(" separator=","  close=")">
+	#{element}
+   </foreach>
+  </select>
+  
   <insert id="insert" parameterType="com.lge.stark.eddard.model.Device" >
     INSERT INTO device
     <trim prefix="(" suffix=")" suffixOverrides="," >
