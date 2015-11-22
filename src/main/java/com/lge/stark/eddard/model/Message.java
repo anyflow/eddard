@@ -9,6 +9,7 @@ public class Message extends Jsonizable {
 	private String roomId;
 	private String creatorId;
 	private String message;
+	private int unreadCount = 0;
 	private Date createDate;
 
 	public String getId() {
@@ -41,6 +42,14 @@ public class Message extends Jsonizable {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public int getUnreadCount() {
+		return unreadCount;
+	}
+
+	public void setUnreadCount(int unreadCount) {
+		this.unreadCount = unreadCount;
 	}
 
 	public Date getCreateDate() {

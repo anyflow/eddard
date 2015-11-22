@@ -6,12 +6,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.lge.stark.eddard.controller.room.DeviceTest;
 import com.lge.stark.eddard.controller.room.RoomTest;
 
 import junit.framework.TestSuite;
 
 @RunWith(Suite.class)
-@SuiteClasses({ RoomTest.class })
+@SuiteClasses({ RoomTest.class, DeviceTest.class })
 public class ApiTestSuite extends TestSuite {
 
 	private static com.lge.stark.eddard.Entrypoint server = null;

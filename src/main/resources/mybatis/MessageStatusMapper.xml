@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lge.stark.eddard.mybatis.MessageStatusMapper" >
+
+  <resultMap id="BaseResultMap" type="com.lge.stark.eddard.model.MessageStatus" >
+    <id column="message_id" property="messageId" jdbcType="VARCHAR" />
+    <id column="device_id" property="deviceId" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="sent_date" property="sentDate" jdbcType="TIMESTAMP" />
+    <result column="read_date" property="readDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    message_id, device_id, status, create_date, sent_date, read_date
+  </sql>
+  
+  <insert id="insert" parameterType="com.lge.stark.eddard.model.MessageStatus" >
+    INSERT INTO message_status (message_id, device_id, status, create_date, sent_date, read_date)
+    VALUES (
+    	#{messageId,jdbcType=VARCHAR},
+    	#{deviceId,jdbcType=VARCHAR},
+    	#{status,jdbcType=VARCHAR},
+    	#{createDate,jdbcType=TIMESTAMP},
+    	#{sentDate,jdbcType=TIMESTAMP},
+    	#{readDate,jdbcType=TIMESTAMP}
+   	)
+  </insert>
+</mapper>

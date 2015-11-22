@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.lge.stark.eddard.mybatis.DeviceMapper" >
+
+  <resultMap id="BaseResultMap" type="com.lge.stark.eddard.model.Device" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="is_active" property="secretKey" jdbcType="VARCHAR" />
+    <result column="receiver_id" property="receiverId" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, type, is_active, receiver_id, create_date
+  </sql>
+
+  <insert id="insert" parameterType="com.lge.stark.eddard.model.Device" >
+    INSERT INTO device
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        id, type, is_active, receiver_id, create_date
+    </trim>
+    VALUES (
+        #{id,jdbcType=VARCHAR},
+ 		#{type,jdbcType=VARCHAR},
+ 		#{isActive,jdbcType=TINYINT},
+ 		#{receiverId,jdbcType=VARCHAR},
+ 		#{createDate,jdbcType=TIMESTAMP}
+	)
+  </insert>
+  
+  <delete id="delete" parameterType="java.lang.String" >
+    DELETE 
+    FROM	device
+    WHERE	1=1
+    AND		id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <update id="updateSelective" parameterType="com.lge.stark.eddard.model.Device" >
+    UPDATE device
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="isActive != null" >
+        is_active = #{isActive,jdbcType=TINYINT},
+      </if>
+      <if test="receiverId != null" >
+        receiver_id = #{receiverId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE 	1=1
+    AND		id = #{id,jdbcType=VARCHAR}
+  </update>  
+</mapper>

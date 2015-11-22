@@ -10,8 +10,10 @@ import com.lge.stark.eddard.gateway.PushGateway;
 import com.lge.stark.eddard.mockserver.ProfileServer;
 import com.lge.stark.eddard.model.Device;
 import com.lge.stark.eddard.model.Message;
+import com.lge.stark.eddard.model.MessageStatus;
 import com.lge.stark.eddard.model.Room;
 import com.lge.stark.eddard.model.RoomUserMap;
+import com.lge.stark.eddard.mybatis.MessageStatusMapper;
 import com.lge.stark.eddard.mybatis.RoomMapper;
 import com.lge.stark.eddard.mybatis.RoomUserMapMapper;
 import com.lge.stark.eddard.mybatis.SqlConnector;
@@ -85,26 +87,41 @@ public class RoomController {
 
 			Message msg = MessageController.instance().create(session, room.getId(), message, inviterId);
 
-			session.commit();
-
-			inviteeIds.forEach(inviteeId -> {
+			for (String inviteeId : inviteeIds) {
 				List<String> deviceIds = ProfileServer.instance().getDevices(inviteeId);
 
 				List<Device> devices = DeviceController.instance().get(deviceIds);
 
-				if (devices == null || devices.size() <= 0) { return; }
+				if (devices == null || devices.size() <= 0) {
+					continue;
+				}
 
-				Device active = devices.stream().filter(item -> {
+				Device activeDevice = devices.stream().filter(item -> {
 					return item.isActive();
 				}).findFirst().get();
 
-				if (active == null) { return; }
+				if (activeDevice == null) {
+					continue;
+				}
 
-				// TODO insert into message_status
-				// TODO message setReadcount
+				MessageStatus ms = new MessageStatus();
 
-				PushGateway.instance().sendMessage(active.getPushType(), active.getReceiverId(), message);
-			});
+				ms.setMessageId(msg.getId());
+				ms.setDeviceId(activeDevice.getId());
+				ms.setStatus(MessageStatus.Status.PEND);
+				ms.setCreateDate(new Date());
+
+				if (session.getMapper(MessageStatusMapper.class)
+						.insert(ms) <= 0) { throw new FaultException(
+								new Fault("3", "Unknown DB error occured : MessageStatus creation failed.",
+										HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
+
+				msg.setUnreadCount(msg.getUnreadCount() + 1);
+
+				PushGateway.instance().sendMessage(activeDevice.getType(), activeDevice.getReceiverId(), message);
+			}
+
+			session.commit();
 
 			return new RoomMessage(room, msg);
 		}
