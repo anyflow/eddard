@@ -14,7 +14,7 @@ public class Device extends Jsonizable {
 	private String userId;
 	private PushType pushType;
 	private String receiverId;
-	private boolean logined;
+	private boolean isActive;
 	private Date createDate;
 
 	public String getId() {
@@ -49,12 +49,12 @@ public class Device extends Jsonizable {
 		this.receiverId = receiverId;
 	}
 
-	public boolean logined() {
-		return logined;
+	public boolean isActive() {
+		return isActive;
 	}
 
-	public void logined(boolean logined) {
-		this.logined = logined;
+	public void isActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public Date getCreateDate() {

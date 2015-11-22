@@ -3,6 +3,8 @@ package com.lge.stark.eddard;
 import java.io.File;
 import java.io.FileReader;
 
+import com.lge.stark.eddard.mockserver.ProfileServer;
+
 import net.anyflow.menton.http.HttpServer;
 
 public class Entrypoint {
@@ -39,6 +41,9 @@ public class Entrypoint {
 					+ Configurator.instance().APPLICATION_PROPERTIES_FILE_NAME;
 
 			net.anyflow.menton.Configurator.instance().initialize(new FileReader(mentonPropFilePath));
+
+			String profileDataPath = Environment.getWorkingPath(Entrypoint.class) + "/testdata/profile.json";
+			ProfileServer.instance().load(profileDataPath);
 
 			logger.info("Starting Eddard...");
 

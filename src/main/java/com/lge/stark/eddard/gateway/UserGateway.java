@@ -1,9 +1,5 @@
 package com.lge.stark.eddard.gateway;
 
-import org.apache.commons.lang3.NotImplementedException;
-
-import com.lge.stark.eddard.model.Device;
-
 public class UserGateway {
 
 	@SuppressWarnings("unused")
@@ -17,9 +13,5 @@ public class UserGateway {
 		}
 
 		return instance;
-	}
-
-	public Device getLogined(String userId) {
-		throw new NotImplementedException("");
 	}
 }

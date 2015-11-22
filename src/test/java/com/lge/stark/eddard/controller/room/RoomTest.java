@@ -17,6 +17,7 @@ import org.junit.runners.MethodSorters;
 
 import com.jayway.jsonpath.JsonPath;
 import com.lge.stark.eddard.ApiTestCase;
+import com.lge.stark.eddard.IdGenerator;
 
 import io.netty.handler.codec.http.HttpHeaders.Names;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -48,7 +49,7 @@ public class RoomTest extends ApiTestCase {
 		JSONObject param = new JSONObject();
 
 		param.put("name", "sampleRoomName");
-		param.put("inviterId", "aaa");
+		param.put("inviterId", IdGenerator.newId());
 		param.put("inviteeIds", new JSONArray());
 		param.put("secretKey", "sampleSecretKey");
 		param.put("message", "test message");

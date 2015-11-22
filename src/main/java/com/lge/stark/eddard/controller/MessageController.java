@@ -22,7 +22,7 @@ public class MessageController {
 		return instance;
 	}
 
-	public Message create(SqlSessionEx session, String roomId, String message, String creatorId, int readCount) {
+	public Message create(SqlSessionEx session, String roomId, String message, String creatorId) {
 
 		Message ret = new Message();
 
@@ -30,7 +30,6 @@ public class MessageController {
 		ret.setCreateDate(new Date());
 		ret.setCreatorId(creatorId);
 		ret.setMessage(message);
-		ret.setReadCount(readCount);
 		ret.setRoomId(roomId);
 
 		session.getMapper(MessageMapper.class).insertSelective(ret);

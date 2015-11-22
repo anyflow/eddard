@@ -6,8 +6,8 @@ import java.util.List;
 import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.IdGenerator;
-import com.lge.stark.eddard.gateway.DeviceGateway;
 import com.lge.stark.eddard.gateway.PushGateway;
+import com.lge.stark.eddard.mockserver.ProfileServer;
 import com.lge.stark.eddard.model.Device;
 import com.lge.stark.eddard.model.Message;
 import com.lge.stark.eddard.model.Room;
@@ -83,18 +83,28 @@ public class RoomController {
 							new Fault("3", "Unknown DB error occured : room creation failed.",
 									HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
 
-			Message msg = MessageController.instance().create(session, room.getId(), message, inviterId, inviteeIds.size());
+			Message msg = MessageController.instance().create(session, room.getId(), message, inviterId);
 
 			session.commit();
 
-			for (String inviteeId : inviteeIds) {
-				Device device = DeviceGateway.instance().getLogined(inviteeId);
-				if (device == null) {
-					continue;
-				}
+			inviteeIds.forEach(inviteeId -> {
+				List<String> deviceIds = ProfileServer.instance().getDevices(inviteeId);
 
-				PushGateway.instance().sendMessage(device.getPushType(), device.getReceiverId(), message);
-			}
+				List<Device> devices = DeviceController.instance().get(deviceIds);
+
+				if (devices == null || devices.size() <= 0) { return; }
+
+				Device active = devices.stream().filter(item -> {
+					return item.isActive();
+				}).findFirst().get();
+
+				if (active == null) { return; }
+
+				// TODO insert into message_status
+				// TODO message setReadcount
+
+				PushGateway.instance().sendMessage(active.getPushType(), active.getReceiverId(), message);
+			});
 
 			return new RoomMessage(room, msg);
 		}

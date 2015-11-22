@@ -1,8 +1,6 @@
 package com.lge.stark.eddard.gateway;
 
-import org.apache.commons.lang3.NotImplementedException;
-
-import com.lge.stark.eddard.model.Device;
+import com.lge.stark.eddard.mockserver.DeviceServer;
 
 public class DeviceGateway {
 
@@ -19,7 +17,7 @@ public class DeviceGateway {
 		return instance;
 	}
 
-	public Device getLogined(String userId) {
-		throw new NotImplementedException("");
+	public boolean isValid(String deviceId) {
+		return DeviceServer.instance().isValid(deviceId);
 	}
 }

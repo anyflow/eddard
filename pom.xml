@@ -134,6 +134,7 @@
 					<include>log4j.xml</include>
 					<include>startup.sh</include>
 					<include>shutdown.sh</include>
+					<include>testdata/*</include>
 				</includes>
 			</resource>
 			<resource>
