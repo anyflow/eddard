@@ -23,13 +23,20 @@ import net.anyflow.menton.http.HttpConstants.HeaderValues;
 import net.anyflow.menton.http.HttpResponse;
 import net.anyflow.menton.http.IHttpClient;
 import net.anyflow.menton.http.MockHttpClient;
+import net.anyflow.menton.http.MockHttpServer;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DeviceTest extends ApiTestCase {
 
+	private static MockHttpServer SERVER;
+	private static String DEVICE_ID;
+	private static String BASE_ADDRESS;
+
 	@BeforeClass
 	public static void setup() {
-
+		SERVER = ApiTestSuite.server();
+		DEVICE_ID = "09bab373-ff80-42ca-a221-ba3e8345a469";
+		BASE_ADDRESS = "http://localhost:8080/device";
 	}
 
 	@AfterClass
@@ -37,21 +44,17 @@ public class DeviceTest extends ApiTestCase {
 
 	}
 
-	final String address = "http://localhost:8080/device";
-
-	private static String deviceId = "09bab373-ff80-42ca-a221-ba3e8345a469";
-
 	@Test
 	public void test1_Post() throws UnsupportedOperationException, URISyntaxException, JSONException {
 
 		JSONObject param = new JSONObject();
 
-		param.put("deviceId", deviceId);
+		param.put("deviceId", DEVICE_ID);
 		param.put("receiverId", IdGenerator.newId());
 		param.put("isActive", false);
 		param.put("type", "LGPS");
 
-		IHttpClient client = new MockHttpClient(ApiTestSuite.server(), address);
+		IHttpClient client = new MockHttpClient(SERVER, BASE_ADDRESS);
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 		client.httpRequest().setContent(param.toString());
@@ -64,7 +67,7 @@ public class DeviceTest extends ApiTestCase {
 	@Test
 	public void test2_PutStatus() throws UnsupportedOperationException, URISyntaxException, JSONException {
 
-		IHttpClient client = new MockHttpClient(ApiTestSuite.server(), address + "/" + deviceId + "/status");
+		IHttpClient client = new MockHttpClient(SERVER, BASE_ADDRESS + "/" + DEVICE_ID + "/status");
 
 		JSONObject param = new JSONObject();
 
@@ -81,7 +84,7 @@ public class DeviceTest extends ApiTestCase {
 	@Test
 	public void test3_Delete() throws UnsupportedOperationException, URISyntaxException, JSONException {
 
-		IHttpClient client = new MockHttpClient(ApiTestSuite.server(), address + "/" + deviceId);
+		IHttpClient client = new MockHttpClient(SERVER, BASE_ADDRESS + "/" + DEVICE_ID);
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 

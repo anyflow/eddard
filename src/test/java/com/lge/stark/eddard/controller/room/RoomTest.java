@@ -27,32 +27,34 @@ import net.anyflow.menton.http.HttpConstants.HeaderValues;
 import net.anyflow.menton.http.HttpResponse;
 import net.anyflow.menton.http.IHttpClient;
 import net.anyflow.menton.http.MockHttpClient;
+import net.anyflow.menton.http.MockHttpServer;
 import net.minidev.json.JSONArray;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RoomTest extends ApiTestCase {
 
+	private static MockHttpServer SERVER;
+	private static String INVITER_ID;
+	private static List<String> INVITEE_IDS;
+
+	private static String BASE_ADDRESS;
+
+	private static String ROOM_ID;
+
 	@BeforeClass
 	public static void setup() {
+		SERVER = ApiTestSuite.server();
 
+		BASE_ADDRESS = "http://localhost:8080/room";
+
+		INVITER_ID = "37cd2cd5-0a1e-4641-9f5e-6096b16b64d5";
+		INVITEE_IDS = Lists.newArrayList(
+				new String[] { "965b4a80-0064-4224-bf71-d95f0b1b1b3e", "fb4177cc-36e0-4341-8f81-63784d49139e" });
 	}
 
 	@AfterClass
 	public static void teardown() {
 
-	}
-
-	final String address = "http://localhost:8080/room";
-
-	private static String roomId;
-
-	private static String inviterId;
-	private static List<String> inviteeIds;
-
-	static {
-		inviterId = "37cd2cd5-0a1e-4641-9f5e-6096b16b64d5";
-		inviteeIds = Lists.newArrayList(
-				new String[] { "965b4a80-0064-4224-bf71-d95f0b1b1b3e", "fb4177cc-36e0-4341-8f81-63784d49139e" });
 	}
 
 	@Test
@@ -61,17 +63,17 @@ public class RoomTest extends ApiTestCase {
 		JSONObject param = new JSONObject();
 
 		JSONArray inviteeIdsJson = new JSONArray();
-		inviteeIds.forEach(x -> {
+		INVITEE_IDS.forEach(x -> {
 			inviteeIdsJson.add(x);
 		});
 
 		param.put("name", "sampleRoomName");
-		param.put("inviterId", inviterId);
+		param.put("inviterId", INVITER_ID);
 		param.put("inviteeIds", inviteeIdsJson);
 		param.put("secretKey", "sampleSecretKey");
 		param.put("message", "test message");
 
-		IHttpClient client = new MockHttpClient(ApiTestSuite.server(), address);
+		IHttpClient client = new MockHttpClient(SERVER, BASE_ADDRESS);
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 		client.httpRequest().setContent(param.toString());
@@ -84,13 +86,13 @@ public class RoomTest extends ApiTestCase {
 
 		assertThat(content, containsString("roomId"));
 
-		roomId = JsonPath.read(content, "$.roomId");
+		ROOM_ID = JsonPath.read(content, "$.roomId");
 	}
 
 	@Test
 	public void test2_Get() throws UnsupportedOperationException, URISyntaxException, JSONException {
 
-		IHttpClient client = new MockHttpClient(ApiTestSuite.server(), address + "/" + roomId);
+		IHttpClient client = new MockHttpClient(SERVER, BASE_ADDRESS + "/" + ROOM_ID);
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 
