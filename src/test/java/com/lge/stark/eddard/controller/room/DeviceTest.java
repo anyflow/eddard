@@ -77,7 +77,7 @@ public class DeviceTest extends ApiTestCase {
 	}
 
 	@Test
-	public void test3_DELETE() throws UnsupportedOperationException, URISyntaxException, JSONException {
+	public void test3_Delete() throws UnsupportedOperationException, URISyntaxException, JSONException {
 
 		HttpClient client = new HttpClient(address + "/" + deviceId);
 

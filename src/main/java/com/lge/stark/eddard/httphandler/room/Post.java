@@ -38,14 +38,15 @@ public class Post extends RequestHandler {
 				inviteeIds.add(inviteeIdsJson.get(i).toString());
 			}
 
-			RoomController.RoomMessage roomMessage = RoomController.instance().create(name, inviterId, inviteeIds, secretKey,
-					message);
+			RoomController.RoomMessage roomMessage = RoomController.instance().create(name, inviterId, inviteeIds,
+					secretKey, message);
 
 			JSONObject ret = new JSONObject();
 
 			ret.put("roomId", roomMessage.room.getId());
 			ret.put("messageId", roomMessage.message.getId());
 			ret.put("createDate", roomMessage.room.getCreateDate().getTime());
+			ret.put("unreadCount", roomMessage.message.getUnreadCount());
 
 			return ret.toString();
 		}

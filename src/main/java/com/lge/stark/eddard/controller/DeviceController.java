@@ -6,6 +6,7 @@ import java.util.List;
 import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.model.Device;
+import com.lge.stark.eddard.model.PushType;
 import com.lge.stark.eddard.mybatis.DeviceMapper;
 import com.lge.stark.eddard.mybatis.SqlConnector;
 import com.lge.stark.eddard.mybatis.SqlSessionEx;
@@ -37,8 +38,7 @@ public class DeviceController {
 		}
 	}
 
-	public void create(String deviceId, String receiverId, Device.PushType type, boolean isActive)
-			throws FaultException {
+	public void create(String deviceId, String receiverId, PushType type, boolean isActive) throws FaultException {
 		Device device = new Device();
 
 		device.setId(deviceId);

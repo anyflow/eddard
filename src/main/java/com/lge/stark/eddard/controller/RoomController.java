@@ -98,7 +98,7 @@ public class RoomController {
 
 				Device activeDevice = devices.stream().filter(item -> {
 					return item.isActive();
-				}).findFirst().get();
+				}).findFirst().orElse(null);
 
 				if (activeDevice == null) {
 					continue;

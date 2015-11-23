@@ -6,7 +6,7 @@
   <resultMap id="BaseResultMap" type="com.lge.stark.eddard.model.Device" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="VARCHAR" />
-    <result column="is_active" property="secretKey" jdbcType="VARCHAR" />
+    <result column="is_active" property="isActive" jdbcType="BOOLEAN" />
     <result column="receiver_id" property="receiverId" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
   </resultMap>
@@ -15,7 +15,7 @@
     id, type, is_active, receiver_id, create_date
   </sql>
 
-  <select id="selectIn" resultType="com.lge.stark.eddard.model.Device" >
+  <select id="selectIn" resultMap="BaseResultMap" >
    SELECT 	id, type, is_active, receiver_id, create_date
    FROM		device
    WHERE 	1=1
@@ -33,7 +33,7 @@
     VALUES (
         #{id,jdbcType=VARCHAR},
  		#{type,jdbcType=VARCHAR},
- 		#{isActive,jdbcType=TINYINT},
+ 		#{isActive,jdbcType=CHAR},
  		#{receiverId,jdbcType=VARCHAR},
  		#{createDate,jdbcType=TIMESTAMP}
 	)
@@ -53,7 +53,7 @@
         type = #{type,jdbcType=VARCHAR},
       </if>
       <if test="isActive != null" >
-        is_active = #{isActive,jdbcType=TINYINT},
+        is_active = #{isActive,jdbcType=CHAR},
       </if>
       <if test="receiverId != null" >
         receiver_id = #{receiverId,jdbcType=VARCHAR},

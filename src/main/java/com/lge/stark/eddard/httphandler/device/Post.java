@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.controller.DeviceController;
-import com.lge.stark.eddard.model.Device;
+import com.lge.stark.eddard.model.PushType;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
@@ -26,7 +26,7 @@ public class Post extends RequestHandler {
 
 			String deviceId = json.getString("deviceId");
 			String receiverId = json.getString("receiverId");
-			Device.PushType type = Device.PushType.from(json.getString("type"));
+			PushType type = PushType.from(json.getString("type"));
 			boolean isActive = json.getBoolean("isActive");
 
 			DeviceController.instance().create(deviceId, receiverId, type, isActive);
