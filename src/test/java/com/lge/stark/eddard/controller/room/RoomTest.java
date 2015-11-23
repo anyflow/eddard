@@ -18,13 +18,15 @@ import org.junit.runners.MethodSorters;
 import com.google.common.collect.Lists;
 import com.jayway.jsonpath.JsonPath;
 import com.lge.stark.eddard.ApiTestCase;
+import com.lge.stark.eddard.ApiTestSuite;
 
 import io.netty.handler.codec.http.HttpHeaders.Names;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
-import net.anyflow.menton.http.HttpClient;
 import net.anyflow.menton.http.HttpConstants.HeaderValues;
 import net.anyflow.menton.http.HttpResponse;
+import net.anyflow.menton.http.IHttpClient;
+import net.anyflow.menton.http.MockHttpClient;
 import net.minidev.json.JSONArray;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -69,7 +71,7 @@ public class RoomTest extends ApiTestCase {
 		param.put("secretKey", "sampleSecretKey");
 		param.put("message", "test message");
 
-		HttpClient client = new HttpClient(address);
+		IHttpClient client = new MockHttpClient(ApiTestSuite.server(), address);
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 		client.httpRequest().setContent(param.toString());
@@ -88,7 +90,7 @@ public class RoomTest extends ApiTestCase {
 	@Test
 	public void test2_Get() throws UnsupportedOperationException, URISyntaxException, JSONException {
 
-		HttpClient client = new HttpClient(address + "/" + roomId);
+		IHttpClient client = new MockHttpClient(ApiTestSuite.server(), address + "/" + roomId);
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 
