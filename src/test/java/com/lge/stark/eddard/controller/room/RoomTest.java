@@ -36,7 +36,7 @@ public class RoomTest extends ApiTestCase {
 	private static MockHttpServer SERVER;
 	private static String INVITER_ID;
 	private static List<String> INVITEE_IDS;
-
+	private static List<String> NEW_INVITEE_IDS;
 	private static String BASE_ADDRESS;
 
 	private static String ROOM_ID;
@@ -49,6 +49,8 @@ public class RoomTest extends ApiTestCase {
 
 		INVITER_ID = "37cd2cd5-0a1e-4641-9f5e-6096b16b64d5";
 		INVITEE_IDS = Lists.newArrayList(
+				new String[] { "9658b662-9352-46d5-b778-908bc90204a6", "7db4ee17-5e7c-4a8e-b868-571168f7fcb1" });
+		NEW_INVITEE_IDS = Lists.newArrayList(
 				new String[] { "965b4a80-0064-4224-bf71-d95f0b1b1b3e", "fb4177cc-36e0-4341-8f81-63784d49139e" });
 	}
 
@@ -84,9 +86,9 @@ public class RoomTest extends ApiTestCase {
 
 		String content = response.content().toString(CharsetUtil.UTF_8);
 
-		assertThat(content, containsString("roomId"));
+		assertThat(content, containsString("id"));
 
-		ROOM_ID = JsonPath.read(content, "$.roomId");
+		ROOM_ID = JsonPath.read(content, "$.id");
 	}
 
 	@Test
@@ -103,5 +105,33 @@ public class RoomTest extends ApiTestCase {
 		String content = response.content().toString(CharsetUtil.UTF_8);
 
 		assertThat(content, containsString("createDate"));
+	}
+
+	@Test
+	public void test3_PostUser() throws UnsupportedOperationException, URISyntaxException, JSONException {
+
+		JSONObject param = new JSONObject();
+
+		JSONArray inviteeIdsJson = new JSONArray();
+		NEW_INVITEE_IDS.stream().forEach(x -> {
+			inviteeIdsJson.add(x);
+		});
+
+		param.put("users", inviteeIdsJson);
+
+		IHttpClient client = new MockHttpClient(SERVER, BASE_ADDRESS + "/" + ROOM_ID + "/user");
+
+		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
+		client.httpRequest().setContent(param.toString());
+
+		HttpResponse response = client.post();
+
+		assertThat(response.getStatus(), is(HttpResponseStatus.OK));
+
+		String content = response.content().toString(CharsetUtil.UTF_8);
+
+		assertThat(content, containsString("id"));
+
+		assertThat(ROOM_ID, is(JsonPath.read(content, "$.id").toString()));
 	}
 }

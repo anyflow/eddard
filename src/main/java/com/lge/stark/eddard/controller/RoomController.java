@@ -143,9 +143,51 @@ public class RoomController {
 
 			return new RoomMessage(room, msg);
 		}
-		finally
+		finally {
+			session.close();
+		}
+	}
 
-		{
+	public Room addUsers(String roomId, List<String> userIds) throws FaultException {
+		SqlSessionEx session = SqlConnector.openSession(false);
+
+		try {
+			Room ret = session.getMapper(RoomMapper.class).selectByPrimaryKey(roomId);
+
+			if (ret == null) { throw new FaultException(new Fault("2", "Room not found.")); }
+
+			List<RoomUserMap> userIdsPrev = session.getMapper(RoomUserMapMapper.class).selectUsersOf(ret.getId());
+
+			for (String userId : userIds) {
+				if (userIdsPrev.stream().anyMatch(x -> {
+					return x.getUserId().equals(userId);
+				})) {
+					continue;
+				}
+
+				RoomUserMap item = new RoomUserMap(roomId, userId);
+				userIdsPrev.add(item);
+
+				if (session.getMapper(RoomUserMapMapper.class)
+						.insert(item) <= 0) { throw new FaultException(
+								new Fault("3", "Unknown DB error occured : RoomUserMap creation failed.",
+										HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
+			}
+
+			List<User> users = Lists.newArrayList();
+
+			userIdsPrev.forEach(item -> {
+				User user = new User();
+				user.setId(item.getUserId());
+
+				users.add(user);
+			});
+
+			ret.setUsers(users);
+
+			return ret;
+		}
+		finally {
 			session.close();
 		}
 	}

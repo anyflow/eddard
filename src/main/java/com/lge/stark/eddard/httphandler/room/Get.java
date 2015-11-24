@@ -10,7 +10,7 @@ import net.anyflow.menton.http.RequestHandler;
 /**
  * @author Park Hyunjeong
  */
-@RequestHandler.Handles(paths = { "room/{roomId}" }, httpMethods = { "GET" })
+@RequestHandler.Handles(paths = { "room/{id}" }, httpMethods = { "GET" })
 public class Get extends RequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Get.class);
@@ -18,7 +18,7 @@ public class Get extends RequestHandler {
 	@Override
 	public String service() {
 		try {
-			String id = httpRequest().pathParameter("roomId");
+			String id = httpRequest().pathParameter("id");
 
 			if (id == null) {
 				httpResponse().setStatus(HttpResponseStatus.BAD_REQUEST);

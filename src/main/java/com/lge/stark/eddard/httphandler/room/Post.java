@@ -43,7 +43,7 @@ public class Post extends RequestHandler {
 
 			JSONObject ret = new JSONObject();
 
-			ret.put("roomId", roomMessage.room.getId());
+			ret.put("id", roomMessage.room.getId());
 			ret.put("messageId", roomMessage.message.getId());
 			ret.put("createDate", roomMessage.room.getCreateDate().getTime());
 			ret.put("unreadCount", roomMessage.message.getUnreadCount());
