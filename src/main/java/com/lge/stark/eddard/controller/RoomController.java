@@ -3,6 +3,7 @@ package com.lge.stark.eddard.controller;
 import java.util.Date;
 import java.util.List;
 
+import com.google.inject.internal.Lists;
 import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.IdGenerator;
@@ -13,6 +14,7 @@ import com.lge.stark.eddard.model.Message;
 import com.lge.stark.eddard.model.MessageStatus;
 import com.lge.stark.eddard.model.Room;
 import com.lge.stark.eddard.model.RoomUserMap;
+import com.lge.stark.eddard.model.User;
 import com.lge.stark.eddard.mybatis.MessageStatusMapper;
 import com.lge.stark.eddard.mybatis.RoomMapper;
 import com.lge.stark.eddard.mybatis.RoomUserMapMapper;
@@ -42,6 +44,19 @@ public class RoomController {
 			Room ret = session.getMapper(RoomMapper.class).selectByPrimaryKey(id);
 
 			if (ret == null) { throw new FaultException(new Fault("2", "Room not found.")); }
+
+			List<RoomUserMap> userIds = session.getMapper(RoomUserMapMapper.class).selectUsersOf(ret.getId());
+
+			List<User> users = Lists.newArrayList();
+
+			userIds.forEach(item -> {
+				User user = new User();
+				user.setId(item.getUserId());
+
+				users.add(user);
+			});
+
+			ret.setUsers(users);
 
 			return ret;
 		}

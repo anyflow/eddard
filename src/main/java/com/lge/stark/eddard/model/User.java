@@ -2,6 +2,7 @@ package com.lge.stark.eddard.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lge.stark.eddard.Jsonizable;
 
 public class User extends Jsonizable {
@@ -35,6 +36,7 @@ public class User extends Jsonizable {
 		this.description = description;
 	}
 
+	@JsonIgnore
 	public Date getCreateDate() {
 		return createDate;
 	}

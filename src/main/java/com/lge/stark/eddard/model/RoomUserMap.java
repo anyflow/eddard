@@ -6,6 +6,9 @@ public class RoomUserMap extends Jsonizable {
 	private String roomId;
 	private String userId;
 
+	public RoomUserMap() {
+	}
+
 	public RoomUserMap(String roomId, String userId) {
 		this.roomId = roomId;
 		this.userId = userId;

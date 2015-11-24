@@ -1,6 +1,7 @@
 package com.lge.stark.eddard.model;
 
 import java.util.Date;
+import java.util.List;
 
 import com.lge.stark.eddard.Jsonizable;
 
@@ -9,6 +10,7 @@ public class Room extends Jsonizable {
 	private String id;
 	private String name;
 	private String secretKey;
+	private List<User> users;
 	private Date createDate;
 
 	public String getId() {
@@ -33,6 +35,14 @@ public class Room extends Jsonizable {
 
 	public void setSecretKey(String secretKey) {
 		this.secretKey = secretKey;
+	}
+
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 	public Date getCreateDate() {

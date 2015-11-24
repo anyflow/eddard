@@ -12,12 +12,18 @@
     room_id, user_id
   </sql>
 
-  <select id="select" resultMap="BaseResultMap" parameterType="com.lge.stark.eddard.model.RoomUserMap" >
+  <select id="selectUsersOf" resultMap="BaseResultMap" parameterType="java.lang.String" >
     SELECT room_id, user_id
     FROM room_user_map
     where 1=1
     AND room_id = #{roomId,jdbcType=VARCHAR}
-    AND	user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectRoomsOf" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT room_id, user_id
+    FROM room_user_map
+    where 1=1
+    AND user_id = #{userId,jdbcType=VARCHAR}
   </select>
   
   <insert id="insert" parameterType="com.lge.stark.eddard.model.RoomUserMap" >
