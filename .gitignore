@@ -20,3 +20,5 @@ bin/
 build.parameters/buildinfo.properties
 
 **/*.bak
+
+start_local.sh
