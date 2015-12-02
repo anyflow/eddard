@@ -8,7 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import com.lge.stark.eddard.Configurator;
+import com.lge.stark.eddard.Settings;
 
 public class SqlConnector {
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SqlConnector.class);
@@ -21,7 +21,7 @@ public class SqlConnector {
 		try {
 			factory = (new SqlSessionFactoryBuilder())
 					.build(Resources.getResourceAsStream(SqlConnector.class.getClassLoader(),
-							Configurator.instance().getProperty("mybatis.configPath")), Configurator.instance());
+							Settings.SELF.getProperty("mybatis.configPath")), Settings.SELF);
 		}
 		catch (IOException e) {
 			logger.error("Building SQL session factory failed.", e);

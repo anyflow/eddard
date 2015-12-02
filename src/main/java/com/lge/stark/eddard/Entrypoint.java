@@ -60,15 +60,15 @@ public class Entrypoint {
 	}
 
 	public static void initialize() throws FactoryConfigurationError, IOException, FileNotFoundException {
-		String log4jFilePath = (new File(Environment.getWorkingPath(Entrypoint.class),
-				Configurator.instance().LOG4J_PROPERTIES_FILE_NAME)).getPath();
+		String log4jPropertyPath = (new File(Environment.getWorkingPath(Entrypoint.class),
+				Settings.LOG4J_PROPERTIES_FILE_NAME)).getPath();
 
-		org.apache.log4j.xml.DOMConfigurator.configure(log4jFilePath);
+		org.apache.log4j.xml.DOMConfigurator.configure(log4jPropertyPath);
 
 		String mentonPropFilePath = Environment.getWorkingPath(Entrypoint.class) + "/"
-				+ Configurator.instance().APPLICATION_PROPERTIES_FILE_NAME;
+				+ Settings.APPLICATION_PROPERTIES_FILE_NAME;
 
-		net.anyflow.menton.Configurator.instance().initialize(new FileReader(mentonPropFilePath));
+		net.anyflow.menton.Settings.SELF.initialize(new FileReader(mentonPropFilePath));
 
 		String profileDataPath = Environment.getWorkingPath(Entrypoint.class) + "/testdata/profile.json";
 
