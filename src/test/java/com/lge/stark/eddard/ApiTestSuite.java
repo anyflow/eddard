@@ -20,7 +20,7 @@ public class ApiTestSuite extends TestSuite {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Entrypoint.initialize();
+		Entrypoint.loadEnvironmentalSettings();
 
 		server = new MockHttpServer("com.lge.stark.eddard.httphandler");
 	}

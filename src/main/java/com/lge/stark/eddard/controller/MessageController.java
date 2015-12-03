@@ -12,14 +12,10 @@ public class MessageController {
 	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MessageController.class);
 
-	private static MessageController instance;
+	public final static MessageController SELF;
 
-	public static MessageController instance() {
-		if (instance == null) {
-			instance = new MessageController();
-		}
-
-		return instance;
+	static {
+		SELF = new MessageController();
 	}
 
 	public Message create(SqlSessionEx session, String roomId, String message, String creatorId) {

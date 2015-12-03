@@ -11,25 +11,25 @@ public class Settings extends java.util.Properties {
 
 	protected static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Settings.class);
 
-	public final static String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";
-	public final static String LOG4J_PROPERTIES_FILE_NAME = "log4j.xml";
+	public final static String APPLICATION_PROPERTIES_FILE_PATH;
+	public final static String LOG4J_PROPERTIES_FILE_PATH;
 
 	public final static Settings SELF;
 
+	static {
+		APPLICATION_PROPERTIES_FILE_PATH = Environment.getWorkingPath(Entrypoint.class) + "/application.properties";
+		LOG4J_PROPERTIES_FILE_PATH = Environment.getWorkingPath(Entrypoint.class) + "/log4j.xml";
+
+		SELF = new Settings();
+	}
+
 	private Settings() {
 		try {
-			String appPropFilePath = Environment.getWorkingPath(Entrypoint.class) + "/"
-					+ APPLICATION_PROPERTIES_FILE_NAME;
-
-			load(new FileReader(appPropFilePath));
+			load(new FileReader(APPLICATION_PROPERTIES_FILE_PATH));
 		}
 		catch (IOException e) {
 			logger.error("Settings instantiation failed.", e);
 		}
-	}
-
-	static {
-		SELF = new Settings();
 	}
 
 	public int getInt(String key, int defaultValue) {

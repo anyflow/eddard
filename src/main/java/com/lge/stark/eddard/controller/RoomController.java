@@ -27,14 +27,10 @@ public class RoomController {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RoomController.class);
 
-	private static RoomController instance;
+	public final static RoomController SELF;
 
-	public static RoomController instance() {
-		if (instance == null) {
-			instance = new RoomController();
-		}
-
-		return instance;
+	static {
+		SELF = new RoomController();
 	}
 
 	public Room get(String id) throws FaultException {
@@ -100,12 +96,12 @@ public class RoomController {
 							new Fault("3", "Unknown DB error occured : room creation failed.",
 									HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
 
-			Message msg = MessageController.instance().create(session, room.getId(), message, inviterId);
+			Message msg = MessageController.SELF.create(session, room.getId(), message, inviterId);
 
 			for (String inviteeId : inviteeIds) {
-				List<String> deviceIds = ProfileServer.instance().getDevices(inviteeId);
+				List<String> deviceIds = ProfileServer.SELF.getDevices(inviteeId);
 
-				List<Device> devices = DeviceController.instance().get(deviceIds);
+				List<Device> devices = DeviceController.SELF.get(deviceIds);
 
 				if (devices == null || devices.size() <= 0) {
 					continue;
@@ -119,7 +115,7 @@ public class RoomController {
 					continue;
 				}
 
-				if (PushGateway.instance().sendMessage(activeDevice.getType(), activeDevice.getReceiverId(),
+				if (PushGateway.SELF.sendMessage(activeDevice.getType(), activeDevice.getReceiverId(),
 						message) == false) {
 					continue;
 				}

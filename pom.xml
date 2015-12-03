@@ -30,7 +30,7 @@
 			<artifactId>menton</artifactId>
 			<version>1.7.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -41,6 +41,13 @@
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
 			<version>3.2.6</version>
+		</dependency>
+
+		<!-- APNS java library. Refer https://github.com/relayrides/pushy -->
+		<dependency>
+			<groupId>com.relayrides</groupId>
+			<artifactId>pushy</artifactId>
+			<version>0.4.3</version>
 		</dependency>
 
 	</dependencies>

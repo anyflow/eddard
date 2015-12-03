@@ -25,7 +25,7 @@ public class Get extends RequestHandler {
 				return (new Fault("1", "Invalid ID")).toJsonString();
 			}
 
-			return RoomController.instance().get(id).toJsonString();
+			return RoomController.SELF.get(id).toJsonString();
 		}
 		catch (FaultException fe) {
 			logger.error(fe.getMessage(), fe);

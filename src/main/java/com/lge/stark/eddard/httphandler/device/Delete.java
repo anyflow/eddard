@@ -15,7 +15,7 @@ public class Delete extends RequestHandler {
 
 		try {
 			String id = httpRequest().pathParameter("id");
-			DeviceController.instance().delete(id);
+			DeviceController.SELF.delete(id);
 
 			return null;
 		}

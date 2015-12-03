@@ -7,17 +7,13 @@ public class DeviceGateway {
 	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DeviceGateway.class);
 
-	private static DeviceGateway instance;
+	public final static DeviceGateway SELF;
 
-	public static DeviceGateway instance() {
-		if (instance == null) {
-			instance = new DeviceGateway();
-		}
-
-		return instance;
+	static {
+		SELF = new DeviceGateway();
 	}
 
 	public boolean isValid(String deviceId) {
-		return DeviceServer.instance().isValid(deviceId);
+		return DeviceServer.SELF.isValid(deviceId);
 	}
 }

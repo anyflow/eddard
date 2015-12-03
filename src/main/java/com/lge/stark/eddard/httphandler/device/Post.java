@@ -29,7 +29,7 @@ public class Post extends RequestHandler {
 			PushType type = PushType.from(json.getString("type"));
 			boolean isActive = json.getBoolean("isActive");
 
-			DeviceController.instance().create(deviceId, receiverId, type, isActive);
+			DeviceController.SELF.create(deviceId, receiverId, type, isActive);
 
 			return null;
 		}

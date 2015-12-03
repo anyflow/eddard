@@ -18,14 +18,10 @@ public class DeviceController {
 	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DeviceController.class);
 
-	private static DeviceController instance;
+	public final static DeviceController SELF;
 
-	public static DeviceController instance() {
-		if (instance == null) {
-			instance = new DeviceController();
-		}
-
-		return instance;
+	static {
+		SELF = new DeviceController();
 	}
 
 	public List<Device> get(List<String> deviceIds) {

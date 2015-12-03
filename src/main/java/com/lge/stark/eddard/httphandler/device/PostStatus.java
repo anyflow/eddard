@@ -26,7 +26,7 @@ public class PostStatus extends RequestHandler {
 
 			boolean isActive = json.getBoolean("isActive");
 
-			DeviceController.instance().updateStatus(deviceId, isActive);
+			DeviceController.SELF.updateStatus(deviceId, isActive);
 
 			return null;
 		}

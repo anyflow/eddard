@@ -16,14 +16,10 @@ public class ProfileServer {
 	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProfileServer.class);
 
-	private static ProfileServer instance;
+	public final static ProfileServer SELF;
 
-	public static ProfileServer instance() {
-		if (instance == null) {
-			instance = new ProfileServer();
-		}
-
-		return instance;
+	static {
+		SELF = new ProfileServer();
 	}
 
 	private List<Profile> db = Lists.newArrayList();

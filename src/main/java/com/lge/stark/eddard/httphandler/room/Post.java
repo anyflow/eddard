@@ -38,8 +38,8 @@ public class Post extends RequestHandler {
 				inviteeIds.add(inviteeIdsJson.get(i).toString());
 			}
 
-			RoomController.RoomMessage roomMessage = RoomController.instance().create(name, inviterId, inviteeIds,
-					secretKey, message);
+			RoomController.RoomMessage roomMessage = RoomController.SELF.create(name, inviterId, inviteeIds, secretKey,
+					message);
 
 			JSONObject ret = new JSONObject();
 

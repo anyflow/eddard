@@ -1,12 +1,12 @@
 package com.lge.stark.eddard;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 import javax.xml.parsers.FactoryConfigurationError;
 
+import com.lge.stark.eddard.gateway.PushGateway;
 import com.lge.stark.eddard.mockserver.ProfileServer;
 
 import net.anyflow.menton.http.HttpServer;
@@ -14,20 +14,16 @@ import net.anyflow.menton.http.HttpServer;
 public class Entrypoint {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Entrypoint.class);
-	private static Entrypoint instance;
+	private final static Entrypoint SELF;
 
-	public static Entrypoint instance() {
-		if (instance == null) {
-			instance = new Entrypoint();
-		}
-
-		return instance;
+	static {
+		SELF = new Entrypoint();
 	}
 
 	public static void main(String[] args) {
 		Thread.currentThread().setName("main thread");
 
-		if (!Entrypoint.instance().start()) {
+		if (Entrypoint.SELF.start() == false) {
 			System.exit(-1);
 		}
 	}
@@ -36,14 +32,13 @@ public class Entrypoint {
 
 	public boolean start() {
 		try {
-			initialize();
+			loadEnvironmentalSettings();
 
 			logger.info("Starting Eddard...");
 
 			httpServer.start("com.lge.stark.eddard.httphandler");
 
 			Runtime.getRuntime().addShutdownHook(new Thread() {
-
 				@Override
 				public void run() {
 					shutdown(true);
@@ -59,20 +54,13 @@ public class Entrypoint {
 		return true;
 	}
 
-	public static void initialize() throws FactoryConfigurationError, IOException, FileNotFoundException {
-		String log4jPropertyPath = (new File(Environment.getWorkingPath(Entrypoint.class),
-				Settings.LOG4J_PROPERTIES_FILE_NAME)).getPath();
+	public static void loadEnvironmentalSettings()
+			throws FactoryConfigurationError, IOException, FileNotFoundException {
+		org.apache.log4j.xml.DOMConfigurator.configure(Settings.LOG4J_PROPERTIES_FILE_PATH);
 
-		org.apache.log4j.xml.DOMConfigurator.configure(log4jPropertyPath);
+		net.anyflow.menton.Settings.SELF.initialize(new FileReader(Settings.APPLICATION_PROPERTIES_FILE_PATH));
 
-		String mentonPropFilePath = Environment.getWorkingPath(Entrypoint.class) + "/"
-				+ Settings.APPLICATION_PROPERTIES_FILE_NAME;
-
-		net.anyflow.menton.Settings.SELF.initialize(new FileReader(mentonPropFilePath));
-
-		String profileDataPath = Environment.getWorkingPath(Entrypoint.class) + "/testdata/profile.json";
-
-		ProfileServer.instance().load(profileDataPath);
+		ProfileServer.SELF.load(Environment.getWorkingPath(Entrypoint.class) + "/testdata/profile.json");
 	}
 
 	public void shutdown(boolean haltJavaRuntime) {
@@ -85,7 +73,7 @@ public class Entrypoint {
 			logger.debug(e.getMessage(), e);
 		}
 
-		Entrypoint.instance = null;
+		PushGateway.SELF.shutdown();
 
 		logger.info("Eddard shutdowned gracefully.");
 	}

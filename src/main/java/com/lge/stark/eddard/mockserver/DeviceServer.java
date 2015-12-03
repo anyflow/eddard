@@ -7,14 +7,10 @@ public class DeviceServer extends MockServer<Device> {
 	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DeviceServer.class);
 
-	private static DeviceServer instance;
+	public final static DeviceServer SELF;
 
-	public static DeviceServer instance() {
-		if (instance == null) {
-			instance = new DeviceServer();
-		}
-
-		return instance;
+	static {
+		SELF = new DeviceServer();
 	}
 
 	public boolean isValid(String deviceId) {
