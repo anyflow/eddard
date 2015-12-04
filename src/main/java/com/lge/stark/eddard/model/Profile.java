@@ -5,6 +5,7 @@ import com.lge.stark.eddard.Jsonizable;
 public class Profile extends Jsonizable {
 	private String userId;
 	private String deviceId;
+	private boolean isLogined;
 
 	public Profile() {
 	}
@@ -28,5 +29,13 @@ public class Profile extends Jsonizable {
 
 	public void setDeviceId(String deviceId) {
 		this.deviceId = deviceId;
+	}
+
+	public boolean isLogined() {
+		return isLogined;
+	}
+
+	public void setLogined(boolean isLogined) {
+		this.isLogined = isLogined;
 	}
 }

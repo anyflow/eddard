@@ -8,24 +8,24 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lge.stark.eddard.model.Device;
+import com.lge.stark.eddard.model.User;
 
-public class DeviceServer implements MockServer {
+public class UserServer implements MockServer {
 
 	@SuppressWarnings("unused")
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DeviceServer.class);
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UserServer.class);
 
-	public final static DeviceServer SELF;
+	public final static UserServer SELF;
 
 	static {
-		SELF = new DeviceServer();
+		SELF = new UserServer();
 	}
 
-	private List<Device> store;
+	private List<User> store;
 
-	public boolean isValid(String deviceId) {
+	public boolean isValid(String userId) {
 		return store.stream().anyMatch(x -> {
-			return x.getId().equals(deviceId);
+			return x.getId().equals(userId);
 		});
 	}
 
@@ -34,7 +34,7 @@ public class DeviceServer implements MockServer {
 
 		File file = new File(dataFilePath);
 
-		store = (new ObjectMapper()).readValue(file, new TypeReference<List<Device>>() {
+		store = (new ObjectMapper()).readValue(file, new TypeReference<List<User>>() {
 		});
 	}
 

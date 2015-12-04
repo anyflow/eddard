@@ -6,20 +6,26 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.lge.stark.eddard.controller.room.DeviceTest;
-import com.lge.stark.eddard.controller.room.RoomTest;
+import com.lge.stark.eddard.httphandlers.DeviceTest;
+import com.lge.stark.eddard.httphandlers.RoomTest;
+import com.lge.stark.eddard.mockserver.ProfileServerTest;
 
 import junit.framework.TestSuite;
 import net.anyflow.menton.http.MockHttpServer;
 
 @RunWith(Suite.class)
-@SuiteClasses({ RoomTest.class, DeviceTest.class })
+@SuiteClasses({ RoomTest.class, DeviceTest.class, ProfileServerTest.class })
 public class ApiTestSuite extends TestSuite {
 
 	private static MockHttpServer server = null;
 
+	private static boolean setupLoaded = false;
+
 	@BeforeClass
-	public static void setUp() throws Exception {
+	public static void setup() throws Exception {
+		if (setupLoaded) { return; }
+		setupLoaded = true;
+
 		Entrypoint.loadEnvironmentalSettings();
 
 		server = new MockHttpServer("com.lge.stark.eddard.httphandler");

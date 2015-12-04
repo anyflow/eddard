@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.controller.room;
+package com.lge.stark.eddard.httphandlers;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -17,7 +17,6 @@ import org.junit.runners.MethodSorters;
 
 import com.google.common.collect.Lists;
 import com.jayway.jsonpath.JsonPath;
-import com.lge.stark.eddard.ApiTestCase;
 import com.lge.stark.eddard.ApiTestSuite;
 
 import io.netty.handler.codec.http.HttpHeaders.Names;
@@ -27,13 +26,11 @@ import net.anyflow.menton.http.HttpConstants.HeaderValues;
 import net.anyflow.menton.http.HttpResponse;
 import net.anyflow.menton.http.IHttpClient;
 import net.anyflow.menton.http.MockHttpClient;
-import net.anyflow.menton.http.MockHttpServer;
 import net.minidev.json.JSONArray;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class RoomTest extends ApiTestCase {
+public class RoomTest {
 
-	private static MockHttpServer SERVER;
 	private static String INVITER_ID;
 	private static List<String> INVITEE_IDS;
 	private static List<String> NEW_INVITEE_IDS;
@@ -42,8 +39,8 @@ public class RoomTest extends ApiTestCase {
 	private static String ROOM_ID;
 
 	@BeforeClass
-	public static void setup() {
-		SERVER = ApiTestSuite.server();
+	public static void setup() throws Exception {
+		ApiTestSuite.setup();
 
 		BASE_ADDRESS = "http://localhost:8080/room";
 
@@ -75,7 +72,7 @@ public class RoomTest extends ApiTestCase {
 		param.put("secretKey", "sampleSecretKey");
 		param.put("message", "test message");
 
-		IHttpClient client = new MockHttpClient(SERVER, BASE_ADDRESS);
+		IHttpClient client = new MockHttpClient(ApiTestSuite.server(), BASE_ADDRESS);
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 		client.httpRequest().setContent(param.toString());
@@ -94,7 +91,7 @@ public class RoomTest extends ApiTestCase {
 	@Test
 	public void test2_Get() throws UnsupportedOperationException, URISyntaxException, JSONException {
 
-		IHttpClient client = new MockHttpClient(SERVER, BASE_ADDRESS + "/" + ROOM_ID);
+		IHttpClient client = new MockHttpClient(ApiTestSuite.server(), BASE_ADDRESS + "/" + ROOM_ID);
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 
@@ -119,7 +116,7 @@ public class RoomTest extends ApiTestCase {
 
 		param.put("users", inviteeIdsJson);
 
-		IHttpClient client = new MockHttpClient(SERVER, BASE_ADDRESS + "/" + ROOM_ID + "/user");
+		IHttpClient client = new MockHttpClient(ApiTestSuite.server(), BASE_ADDRESS + "/" + ROOM_ID + "/user");
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 		client.httpRequest().setContent(param.toString());
