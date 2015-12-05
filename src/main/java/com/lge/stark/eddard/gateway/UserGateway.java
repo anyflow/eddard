@@ -29,13 +29,21 @@ public class UserGateway {
 		if (devices == null
 				|| devices.size() <= 0) { throw new FaultException(new Fault("2", "invalid device ID : " + deviceId)); }
 
-		ProfileServer.SELF.setLogin(userId, deviceId);
+		List<String> deviceIds = ProfileServer.SELF.getDeviceIds(userId);
+
+		for (String item : deviceIds) {
+			DeviceController.SELF.updateStatus(item, item.equals(deviceId));
+		}
 	}
 
 	public void logout(String userId) throws FaultException {
 		if (UserServer.SELF
 				.isValid(userId) == false) { throw new FaultException(new Fault("1", "invalid user ID : " + userId)); }
 
-		ProfileServer.SELF.setLogout(userId);
+		List<String> deviceIds = ProfileServer.SELF.getDeviceIds(userId);
+
+		for (String item : deviceIds) {
+			DeviceController.SELF.updateStatus(item, false);
+		}
 	}
 }

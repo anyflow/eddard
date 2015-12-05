@@ -99,7 +99,7 @@ public class RoomController {
 			Message msg = MessageController.SELF.create(session, room.getId(), message, inviterId);
 
 			for (String inviteeId : inviteeIds) {
-				List<String> deviceIds = ProfileServer.SELF.getDevices(inviteeId);
+				List<String> deviceIds = ProfileServer.SELF.getDeviceIds(inviteeId);
 
 				List<Device> devices = DeviceController.SELF.get(deviceIds);
 

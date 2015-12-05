@@ -12,9 +12,9 @@ import io.netty.util.CharsetUtil;
 import net.anyflow.menton.http.RequestHandler;
 
 @RequestHandler.Handles(paths = { "device/{id}/status" }, httpMethods = { "PUT" })
-public class PostStatus extends RequestHandler {
+public class PutStatus extends RequestHandler {
 
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PostStatus.class);
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PutStatus.class);
 
 	@Override
 	public String service() {

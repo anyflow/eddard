@@ -106,7 +106,7 @@
 				<configuration>
 					<skipTests>false</skipTests>
 					<includes>
-						<include>**/ApiTestSuite.java</include>
+						<include>**/</include>
 					</includes>
 				</configuration>
 			</plugin>
