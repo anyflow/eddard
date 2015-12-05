@@ -24,7 +24,7 @@ import net.anyflow.menton.http.MockHttpClient;
 public class PutLogoutTest {
 
 	private static String USER_ID;
-	private static String DEVICE_ID = null;
+	private static String DEVICE_ID;
 	private static String DEVICE_ID2 = "f5455162-0004-433c-8e62-d0b75ccbc428";
 
 	@BeforeClass
@@ -33,7 +33,7 @@ public class PutLogoutTest {
 
 		(new com.lge.stark.eddard.httphandler.device.PostTest()).regist(DEVICE_ID2);
 
-		USER_ID = (new com.lge.stark.eddard.httphandler.user.PutLoginTest()).loginedUserId();
+		USER_ID = (new com.lge.stark.eddard.httphandler.user.PutLoginTest()).loginedUserId(DEVICE_ID);
 	}
 
 	@AfterClass

@@ -45,10 +45,10 @@ public class PutLoginTest {
 		}
 	}
 
-	public String loginedUserId() throws Exception {
+	public String loginedUserId(String deviceId) throws Exception {
 		JSONObject param = new JSONObject();
 
-		param.put("deviceId", DEVICE_ID);
+		param.put("deviceId", deviceId);
 
 		IHttpClient client = new MockHttpClient(Server.SERVER, Server.BASE_URI + "/user/" + USER_ID + "/login");
 
@@ -61,7 +61,7 @@ public class PutLoginTest {
 
 		if (HttpResponseStatus.OK.equals(response.getStatus()) == false) { throw new Exception("No 200 OK"); }
 
-		List<Device> devices = DeviceController.SELF.get(Lists.newArrayList(new String[] { DEVICE_ID, DEVICE_ID2 }));
+		List<Device> devices = DeviceController.SELF.get(Lists.newArrayList(new String[] { deviceId, DEVICE_ID2 }));
 
 		assertThat(devices.size(), is(2));
 
@@ -77,6 +77,6 @@ public class PutLoginTest {
 
 	@Test
 	public void testService() throws Exception {
-		loginedUserId();
+		loginedUserId(DEVICE_ID);
 	}
 }
