@@ -1,5 +1,7 @@
 package com.lge.stark.eddard;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.netty.handler.codec.http.HttpResponseStatus;
 
 public class Fault extends Jsonizable {
@@ -33,6 +35,7 @@ public class Fault extends Jsonizable {
 		this.message = message;
 	}
 
+	@JsonIgnore
 	public HttpResponseStatus httpStatus() {
 		return httpStatus;
 	}

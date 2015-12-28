@@ -38,7 +38,7 @@ public class PutLogin extends RequestHandler {
 
 			httpResponse().setStatus(fe.fault().httpStatus());
 
-			return fe.fault().getMessage();
+			return fe.fault().toJsonString();
 		}
 		catch (JSONException e) {
 			logger.error(e.getMessage(), e);

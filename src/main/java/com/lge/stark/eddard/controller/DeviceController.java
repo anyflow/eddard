@@ -50,6 +50,13 @@ public class DeviceController {
 					"Unknown DB error occured : Device creation failed.", HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
 			session.commit();
 		}
+		catch (org.apache.ibatis.exceptions.PersistenceException e) {
+			if (e.getCause() instanceof com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException == false) { throw e; }
+
+			logger.error(e.getMessage(), e);
+			throw new FaultException(
+					new Fault("4", "The device Id(" + deviceId + ") is already exist", HttpResponseStatus.BAD_REQUEST));
+		}
 		finally {
 			session.close();
 		}

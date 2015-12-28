@@ -24,7 +24,7 @@ public class Delete extends RequestHandler {
 
 			httpResponse().setStatus(fe.fault().httpStatus());
 
-			return fe.fault().getMessage();
+			return fe.fault().toJsonString();
 		}
 	}
 }
