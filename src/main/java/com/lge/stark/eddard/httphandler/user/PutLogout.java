@@ -25,7 +25,7 @@ public class PutLogout extends RequestHandler {
 		catch (FaultException fe) {
 			logger.error(fe.getMessage(), fe);
 
-			httpResponse().setStatus(fe.fault().httpStatus());
+			httpResponse().setStatus(fe.fault().httpResponseStatus());
 
 			return fe.fault().toJsonString();
 		}

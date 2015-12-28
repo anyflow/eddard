@@ -3,19 +3,16 @@ package com.lge.stark.eddard.controller;
 import java.util.Date;
 import java.util.List;
 
-import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.model.Device;
+import com.lge.stark.eddard.model.Fault;
 import com.lge.stark.eddard.model.PushType;
 import com.lge.stark.eddard.mybatis.DeviceMapper;
 import com.lge.stark.eddard.mybatis.SqlConnector;
 import com.lge.stark.eddard.mybatis.SqlSessionEx;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
-
 public class DeviceController {
 
-	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DeviceController.class);
 
 	public final static DeviceController SELF;
@@ -46,16 +43,15 @@ public class DeviceController {
 		SqlSessionEx session = SqlConnector.openSession(false);
 
 		try {
-			if (session.getMapper(DeviceMapper.class).insert(device) <= 0) { throw new FaultException(new Fault("3",
-					"Unknown DB error occured : Device creation failed.", HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
+			if (session.getMapper(DeviceMapper.class)
+					.insert(device) <= 0) { throw new FaultException(Fault.COMMON_001); }
 			session.commit();
 		}
 		catch (org.apache.ibatis.exceptions.PersistenceException e) {
 			if (e.getCause() instanceof com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException == false) { throw e; }
 
 			logger.error(e.getMessage(), e);
-			throw new FaultException(
-					new Fault("4", "The device Id(" + deviceId + ") is already exist", HttpResponseStatus.BAD_REQUEST));
+			throw new FaultException(Fault.DEVICE_001.replaceWith(deviceId));
 		}
 		finally {
 			session.close();
@@ -72,9 +68,7 @@ public class DeviceController {
 
 		try {
 			if (session.getMapper(DeviceMapper.class)
-					.updateSelective(device) <= 0) { throw new FaultException(
-							new Fault("3", "Unknown DB error occured : Device updating failed.",
-									HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
+					.updateSelective(device) <= 0) { throw new FaultException(Fault.COMMON_001); }
 			session.commit();
 		}
 		finally {
@@ -86,8 +80,8 @@ public class DeviceController {
 		SqlSessionEx session = SqlConnector.openSession(false);
 
 		try {
-			if (session.getMapper(DeviceMapper.class).delete(deviceId) <= 0) { throw new FaultException(new Fault("3",
-					"Unknown DB error occured : Device deleting failed.", HttpResponseStatus.INTERNAL_SERVER_ERROR)); }
+			if (session.getMapper(DeviceMapper.class)
+					.delete(deviceId) <= 0) { throw new FaultException(Fault.COMMON_001); }
 			session.commit();
 		}
 		finally {

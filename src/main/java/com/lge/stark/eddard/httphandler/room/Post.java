@@ -7,9 +7,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.inject.internal.Lists;
-import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.controller.RoomController;
+import com.lge.stark.eddard.model.Fault;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
@@ -53,7 +53,7 @@ public class Post extends RequestHandler {
 		catch (FaultException fe) {
 			logger.error(fe.getMessage(), fe);
 
-			httpResponse().setStatus(fe.fault().httpStatus());
+			httpResponse().setStatus(fe.fault().httpResponseStatus());
 
 			return fe.fault().toJsonString();
 		}
@@ -62,7 +62,7 @@ public class Post extends RequestHandler {
 
 			httpResponse().setStatus(HttpResponseStatus.BAD_REQUEST);
 
-			return (new Fault("1", "Invalid JSON content")).toJsonString();
+			return Fault.COMMON_002.toJsonString();
 		}
 	}
 }

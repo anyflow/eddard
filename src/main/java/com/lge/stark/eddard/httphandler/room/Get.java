@@ -1,8 +1,8 @@
 package com.lge.stark.eddard.httphandler.room;
 
-import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.controller.RoomController;
+import com.lge.stark.eddard.model.Fault;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import net.anyflow.menton.http.RequestHandler;
@@ -22,7 +22,7 @@ public class Get extends RequestHandler {
 
 			if (id == null) {
 				httpResponse().setStatus(HttpResponseStatus.BAD_REQUEST);
-				return (new Fault("1", "Invalid ID")).toJsonString();
+				return Fault.ROOM_001.replaceWith(id).toJsonString();
 			}
 
 			return RoomController.SELF.get(id).toJsonString();
@@ -30,7 +30,7 @@ public class Get extends RequestHandler {
 		catch (FaultException fe) {
 			logger.error(fe.getMessage(), fe);
 
-			httpResponse().setStatus(fe.fault().httpStatus());
+			httpResponse().setStatus(fe.fault().httpResponseStatus());
 
 			return fe.fault().toJsonString();
 		}

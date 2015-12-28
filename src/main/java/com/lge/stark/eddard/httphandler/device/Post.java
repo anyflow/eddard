@@ -3,9 +3,9 @@ package com.lge.stark.eddard.httphandler.device;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.lge.stark.eddard.Fault;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.controller.DeviceController;
+import com.lge.stark.eddard.model.Fault;
 import com.lge.stark.eddard.model.PushType;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -36,7 +36,7 @@ public class Post extends RequestHandler {
 		catch (FaultException fe) {
 			logger.error(fe.getMessage(), fe);
 
-			httpResponse().setStatus(fe.fault().httpStatus());
+			httpResponse().setStatus(fe.fault().httpResponseStatus());
 
 			return fe.fault().toJsonString();
 		}
@@ -45,7 +45,7 @@ public class Post extends RequestHandler {
 
 			httpResponse().setStatus(HttpResponseStatus.BAD_REQUEST);
 
-			return (new Fault("1", "Invalid JSON content")).toJsonString();
+			return Fault.COMMON_002.toJsonString();
 		}
 	}
 }

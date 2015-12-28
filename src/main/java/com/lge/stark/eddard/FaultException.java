@@ -1,5 +1,7 @@
 package com.lge.stark.eddard;
 
+import com.lge.stark.eddard.model.Fault;
+
 public class FaultException extends Exception {
 
 	private static final long serialVersionUID = -4063767612363345893L;
@@ -16,6 +18,6 @@ public class FaultException extends Exception {
 
 	@Override
 	public String getMessage() {
-		return fault.getMessage() + "\r\n\r\n" + super.getMessage();
+		return fault.toString() + "\r\n\r\n" + super.getMessage();
 	}
 }
