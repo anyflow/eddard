@@ -109,10 +109,7 @@ public class RoomController {
 					continue;
 				}
 
-				if (PushGateway.SELF.sendMessage(activeDevice.getType(), activeDevice.getReceiverId(),
-						message) == false) {
-					continue;
-				}
+				PushGateway.SELF.sendMessage(activeDevice.getType(), activeDevice.getReceiverId(), message);
 
 				MessageStatus ms = new MessageStatus();
 

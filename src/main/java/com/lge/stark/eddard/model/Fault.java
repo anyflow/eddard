@@ -4,8 +4,10 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 
 public enum Fault {
 
+	COMMON_000("COMMON.000", "Unknown error occured.", HttpResponseStatus.INTERNAL_SERVER_ERROR),
 	COMMON_001("COMMON.001", "Unknown DB error occured.", HttpResponseStatus.INTERNAL_SERVER_ERROR), 
 	COMMON_002("COMMON.002", "Invalid JSON content.", HttpResponseStatus.BAD_REQUEST),
+	COMMON_003("COMMON.003", "${replacer}", HttpResponseStatus.BAD_REQUEST),
 
 	DEVICE_001("DEVICE.001", "The Device ID(${replacer}) is already exist.", HttpResponseStatus.BAD_REQUEST), 
 	DEVICE_002("DEVICE.002", "Invalid Device ID(${replacer}).", HttpResponseStatus.BAD_REQUEST),

@@ -7,11 +7,16 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
+import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.Settings;
+import com.lge.stark.eddard.model.Fault;
 import com.lge.stark.eddard.model.PushType;
 import com.relayrides.pushy.apns.ApnsEnvironment;
+import com.relayrides.pushy.apns.FailedConnectionListener;
 import com.relayrides.pushy.apns.PushManager;
 import com.relayrides.pushy.apns.PushManagerConfiguration;
+import com.relayrides.pushy.apns.RejectedNotificationListener;
+import com.relayrides.pushy.apns.RejectedNotificationReason;
 import com.relayrides.pushy.apns.util.ApnsPayloadBuilder;
 import com.relayrides.pushy.apns.util.MalformedTokenStringException;
 import com.relayrides.pushy.apns.util.SSLContextUtil;
@@ -31,20 +36,38 @@ public class PushGateway {
 	private PushManager<SimpleApnsPushNotification> manager;
 
 	private PushGateway() {
+	}
+
+	public void start() throws UnrecoverableKeyException, KeyManagementException, KeyStoreException,
+			NoSuchAlgorithmException, CertificateException, IOException {
 
 		ApnsEnvironment environment = Settings.SELF.getBoolean("apns.isProductionMode", false)
 				? ApnsEnvironment.getProductionEnvironment() : ApnsEnvironment.getSandboxEnvironment();
 
-		try {
-			manager = new PushManager<SimpleApnsPushNotification>(environment,
-					SSLContextUtil.createDefaultSSLContext(Settings.SELF.getProperty("apns.certChainFilePath"),
-							Settings.SELF.getProperty("apns.certPassword")),
-					null, null, null, new PushManagerConfiguration(), "ApnsPushManager");
-		}
-		catch (UnrecoverableKeyException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException
-				| CertificateException | IOException e) {
-			logger.error(e.getMessage(), e);
-		}
+		manager = new PushManager<SimpleApnsPushNotification>(environment,
+				SSLContextUtil.createDefaultSSLContext(Settings.SELF.getProperty("apns.certChainFilePath"),
+						Settings.SELF.getProperty("apns.certPassword")),
+				null, null, null, new PushManagerConfiguration(), "ApnsPushManager");
+
+		manager.registerRejectedNotificationListener(new RejectedNotificationListener<SimpleApnsPushNotification>() {
+
+			@Override
+			public void handleRejectedNotification(PushManager<? extends SimpleApnsPushNotification> pushManager,
+					SimpleApnsPushNotification notification, RejectedNotificationReason rejectionReason) {
+
+				logger.error("{} was rejected with rejection reasponse {}.", notification, rejectionReason);
+			}
+		});
+
+		manager.registerFailedConnectionListener(new FailedConnectionListener<SimpleApnsPushNotification>() {
+
+			@Override
+			public void handleFailedConnection(PushManager<? extends SimpleApnsPushNotification> pushManager,
+					Throwable cause) {
+
+				logger.error(cause.getMessage(), cause);
+			}
+		});
 
 		manager.start();
 	}
@@ -58,7 +81,7 @@ public class PushGateway {
 		}
 	}
 
-	public boolean sendMessage(PushType pushType, String receiverId, String message) {
+	public void sendMessage(PushType pushType, String receiverId, String message) throws FaultException {
 		byte[] token = null;
 
 		try {
@@ -66,7 +89,7 @@ public class PushGateway {
 		}
 		catch (MalformedTokenStringException e) {
 			logger.error(e.getMessage(), e);
-			return false;
+			throw new FaultException(Fault.COMMON_003.replaceWith("Invalid device token"));
 		}
 
 		ApnsPayloadBuilder builder = new ApnsPayloadBuilder();
@@ -81,9 +104,7 @@ public class PushGateway {
 		}
 		catch (InterruptedException e) {
 			logger.error(e.getMessage(), e);
-			return false;
+			throw new FaultException(Fault.COMMON_000);
 		}
-
-		return true;
 	}
 }

@@ -40,6 +40,8 @@ public class Entrypoint {
 
 			httpServer.start("com.lge.stark.eddard.httphandler");
 
+			PushGateway.SELF.start();
+
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
 				public void run() {
@@ -71,14 +73,14 @@ public class Entrypoint {
 	public void shutdown(boolean haltJavaRuntime) {
 		logger.info("Eddard shutting down...");
 
+		PushGateway.SELF.shutdown();
+
 		try {
 			httpServer.shutdown();
 		}
 		catch (Exception e) {
 			logger.debug(e.getMessage(), e);
 		}
-
-		PushGateway.SELF.shutdown();
 
 		logger.info("Eddard shutdowned gracefully.");
 	}

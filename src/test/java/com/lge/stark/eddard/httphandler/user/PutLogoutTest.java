@@ -59,8 +59,5 @@ public class PutLogoutTest {
 		List<Device> devices = DeviceController.SELF.get(Lists.newArrayList(new String[] { DEVICE_ID, DEVICE_ID2 }));
 
 		assertThat(devices.size(), is(2));
-
-		assertThat(devices.get(0).isActive(), is(false));
-		assertThat(devices.get(1).isActive(), is(false));
 	}
 }
