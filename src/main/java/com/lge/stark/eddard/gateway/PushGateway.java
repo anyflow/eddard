@@ -8,23 +8,11 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import com.lge.stark.eddard.FaultException;
-import com.lge.stark.eddard.Settings;
-import com.lge.stark.eddard.model.Fault;
 import com.lge.stark.eddard.model.PushType;
-import com.relayrides.pushy.apns.ApnsEnvironment;
-import com.relayrides.pushy.apns.FailedConnectionListener;
-import com.relayrides.pushy.apns.PushManager;
-import com.relayrides.pushy.apns.PushManagerConfiguration;
-import com.relayrides.pushy.apns.RejectedNotificationListener;
-import com.relayrides.pushy.apns.RejectedNotificationReason;
-import com.relayrides.pushy.apns.util.ApnsPayloadBuilder;
-import com.relayrides.pushy.apns.util.MalformedTokenStringException;
-import com.relayrides.pushy.apns.util.SSLContextUtil;
-import com.relayrides.pushy.apns.util.SimpleApnsPushNotification;
-import com.relayrides.pushy.apns.util.TokenUtil;
 
 public class PushGateway {
 
+	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PushGateway.class);
 
 	public final static PushGateway SELF;
@@ -33,78 +21,39 @@ public class PushGateway {
 		SELF = new PushGateway();
 	}
 
-	private PushManager<SimpleApnsPushNotification> manager;
+	private LgpsGateway lgps;
+	private ApnsGateway apns;
+	private GcmGateway gcm;
 
 	private PushGateway() {
+		lgps = new LgpsGateway();
+		apns = new ApnsGateway();
+		gcm = new GcmGateway();
 	}
 
 	public void start() throws UnrecoverableKeyException, KeyManagementException, KeyStoreException,
 			NoSuchAlgorithmException, CertificateException, IOException {
 
-		ApnsEnvironment environment = Settings.SELF.getBoolean("apns.isProductionMode", false)
-				? ApnsEnvironment.getProductionEnvironment() : ApnsEnvironment.getSandboxEnvironment();
-
-		manager = new PushManager<SimpleApnsPushNotification>(environment,
-				SSLContextUtil.createDefaultSSLContext(Settings.SELF.getProperty("apns.certChainFilePath"),
-						Settings.SELF.getProperty("apns.certPassword")),
-				null, null, null, new PushManagerConfiguration(), "ApnsPushManager");
-
-		manager.registerRejectedNotificationListener(new RejectedNotificationListener<SimpleApnsPushNotification>() {
-
-			@Override
-			public void handleRejectedNotification(PushManager<? extends SimpleApnsPushNotification> pushManager,
-					SimpleApnsPushNotification notification, RejectedNotificationReason rejectionReason) {
-
-				logger.error("{} was rejected with rejection reasponse {}.", notification, rejectionReason);
-			}
-		});
-
-		manager.registerFailedConnectionListener(new FailedConnectionListener<SimpleApnsPushNotification>() {
-
-			@Override
-			public void handleFailedConnection(PushManager<? extends SimpleApnsPushNotification> pushManager,
-					Throwable cause) {
-
-				logger.error(cause.getMessage(), cause);
-			}
-		});
-
-		manager.start();
+		apns.start();
 	}
 
 	public void shutdown() {
-		try {
-			manager.shutdown();
-		}
-		catch (InterruptedException e) {
-			logger.error(e.getMessage(), e);
-		}
+		apns.shutdown();
 	}
 
-	public void sendMessage(PushType pushType, String receiverId, String message) throws FaultException {
-		byte[] token = null;
+	public void send(PushType pushType, String receiverId, String message) throws FaultException {
+		switch (pushType) {
+		case LGPS:
+			lgps.send(receiverId, message);
+			break;
 
-		try {
-			token = TokenUtil.tokenStringToByteArray(receiverId);
-		}
-		catch (MalformedTokenStringException e) {
-			logger.error(e.getMessage(), e);
-			throw new FaultException(Fault.COMMON_003.replaceWith("Invalid device token"));
-		}
+		case APNS:
+			apns.send(receiverId, message);
+			break;
 
-		ApnsPayloadBuilder builder = new ApnsPayloadBuilder();
-
-		builder.setAlertBody(message);
-		builder.setSoundFileName("ring-ring.aiff");
-
-		String payload = builder.buildWithDefaultMaximumLength();
-
-		try {
-			manager.getQueue().put(new SimpleApnsPushNotification(token, payload));
-		}
-		catch (InterruptedException e) {
-			logger.error(e.getMessage(), e);
-			throw new FaultException(Fault.COMMON_000);
+		case GCM:
+			gcm.send(receiverId, message);
+			break;
 		}
 	}
 }
