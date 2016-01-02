@@ -23,12 +23,6 @@ public class UserServer implements MockServer {
 
 	private List<User> store;
 
-	public boolean isValid(String userId) {
-		return store.stream().anyMatch(x -> {
-			return x.getId().equals(userId);
-		});
-	}
-
 	@Override
 	public void load(String dataFilePath) throws IOException {
 
@@ -41,5 +35,11 @@ public class UserServer implements MockServer {
 	@Override
 	public void save(String dataFilePath) throws JsonGenerationException, JsonMappingException, IOException {
 		(new ObjectMapper()).writer().writeValue(new File(dataFilePath), store);
+	}
+
+	public User get(String userId) {
+		return store.stream().filter(x -> {
+			return x.getId().equals(userId);
+		}).findFirst().get();
 	}
 }

@@ -3,6 +3,7 @@ package com.lge.stark.eddard;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -19,8 +20,23 @@ public class Jsonizable {
 		return read(json, returnClass, new ObjectMapper());
 	}
 
+	public static <T> T read(String json, TypeReference<T> typeReference) {
+		return read(json, typeReference, new ObjectMapper());
+	}
+
 	public static <T> T read(byte[] json, Class<T> returnClass) {
 		return read(json, returnClass, new ObjectMapper());
+	}
+
+	public static <T> T read(String json, TypeReference<T> typeReference, ObjectMapper mapper) {
+
+		try {
+			return mapper.reader().withType(typeReference).readValue(json);
+		}
+		catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			throw new RuntimeException(RUNTIME_EXCEPTION_MESSAGE, e);
+		}
 	}
 
 	public static <T> T read(String json, Class<T> returnClass, ObjectMapper mapper) {
@@ -28,7 +44,7 @@ public class Jsonizable {
 		try {
 			return mapper.reader().withType(returnClass).readValue(json);
 		}
-		catch(IOException e) {
+		catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new RuntimeException(RUNTIME_EXCEPTION_MESSAGE, e);
 		}
@@ -39,7 +55,7 @@ public class Jsonizable {
 		try {
 			return mapper.reader().withType(returnClass).readValue(json);
 		}
-		catch(IOException e) {
+		catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new RuntimeException(RUNTIME_EXCEPTION_MESSAGE, e);
 		}
@@ -54,20 +70,28 @@ public class Jsonizable {
 	}
 
 	public String toJsonString(ObjectMapper mapper) {
-		try {
-			return mapper.writer().writeValueAsString(this);
-		}
-		catch(JsonProcessingException e) {
-			logger.error(e.getMessage(), e);
-			throw new RuntimeException(RUNTIME_EXCEPTION_MESSAGE, e);
-		}
+		return toJsonString(mapper, this);
 	}
 
 	public byte[] toJsonByteArray(ObjectMapper mapper) {
 		try {
 			return mapper.writer().writeValueAsBytes(this);
 		}
-		catch(JsonProcessingException e) {
+		catch (JsonProcessingException e) {
+			logger.error(e.getMessage(), e);
+			throw new RuntimeException(RUNTIME_EXCEPTION_MESSAGE, e);
+		}
+	}
+
+	public static String toJsonString(Object target) {
+		return toJsonString(new ObjectMapper(), target);
+	}
+
+	public static String toJsonString(ObjectMapper mapper, Object target) {
+		try {
+			return mapper.writer().writeValueAsString(target);
+		}
+		catch (JsonProcessingException e) {
 			logger.error(e.getMessage(), e);
 			throw new RuntimeException(RUNTIME_EXCEPTION_MESSAGE, e);
 		}

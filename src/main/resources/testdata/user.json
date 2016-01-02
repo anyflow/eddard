@@ -1,17 +1,32 @@
 [
 	{
-		"id":"37cd2cd5-0a1e-4641-9f5e-6096b16b64d5"
+		"id":"37cd2cd5-0a1e-4641-9f5e-6096b16b64d5",
+		"name":"Eddard Stark",
+		"description":"Godfather of Stark family",
+		"friends":["965b4a80-0064-4224-bf71-d95f0b1b1b3e", "fb4177cc-36e0-4341-8f81-63784d49139e"]
 	},
 	{
-		"id":"965b4a80-0064-4224-bf71-d95f0b1b1b3e"
+		"id":"965b4a80-0064-4224-bf71-d95f0b1b1b3e",
+		"name":"Robert Baratheon",
+		"description":"Godfather of Baratheon family",
+		"friends":["37cd2cd5-0a1e-4641-9f5e-6096b16b64d5"]
 	},
 	{
-		"id":"fb4177cc-36e0-4341-8f81-63784d49139e"
+		"id":"fb4177cc-36e0-4341-8f81-63784d49139e",
+		"name":"Riccard Karstark",
+		"description":"Godfather of Karstark family",
+		"friends":["37cd2cd5-0a1e-4641-9f5e-6096b16b64d5"]
 	},
 	{
-		"id":"9658b662-9352-46d5-b778-908bc90204a6"
+		"id":"9658b662-9352-46d5-b778-908bc90204a6",
+		"name":"Tywin Lannister",
+		"description":"Godfather of Lannister family",
+		"friends":["7db4ee17-5e7c-4a8e-b868-571168f7fcb1"]
 	},
 	{
-		"id":"7db4ee17-5e7c-4a8e-b868-571168f7fcb1"
+		"id":"7db4ee17-5e7c-4a8e-b868-571168f7fcb1",
+		"name":"Petyr Baelish",
+		"description":"Godfather of Baelish family",
+		"friends":["9658b662-9352-46d5-b778-908bc90204a6"]		
 	}
 ]

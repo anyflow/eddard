@@ -1,6 +1,7 @@
 package com.lge.stark.eddard.model;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lge.stark.eddard.Jsonizable;
@@ -10,6 +11,7 @@ public class User extends Jsonizable {
 	private String id;
 	private String name;
 	private String description;
+	private List<String> friends;
 	private Date createDate;
 
 	public String getId() {
@@ -34,6 +36,14 @@ public class User extends Jsonizable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public List<String> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(List<String> friends) {
+		this.friends = friends;
 	}
 
 	@JsonIgnore
