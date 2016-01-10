@@ -2,6 +2,7 @@ package com.lge.stark.eddard.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lge.stark.eddard.Jsonizable;
 
 public class Device extends Jsonizable {
@@ -45,10 +46,12 @@ public class Device extends Jsonizable {
 		this.receiverId = receiverId;
 	}
 
+	@JsonProperty("active")
 	public boolean isActive() {
 		return isActive;
 	}
 
+	@JsonProperty("active")
 	public void isActive(boolean isActive) {
 		this.isActive = isActive;
 	}

@@ -2,6 +2,9 @@ package com.lge.stark.eddard;
 
 import java.io.IOException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +34,7 @@ public class Jsonizable {
 	public static <T> T read(String json, TypeReference<T> typeReference, ObjectMapper mapper) {
 
 		try {
-			return mapper.reader().withType(typeReference).readValue(json);
+			return mapper.reader().forType(typeReference).readValue(json);
 		}
 		catch (IOException e) {
 			logger.error(e.getMessage(), e);
@@ -42,7 +45,7 @@ public class Jsonizable {
 	public static <T> T read(String json, Class<T> returnClass, ObjectMapper mapper) {
 
 		try {
-			return mapper.reader().withType(returnClass).readValue(json);
+			return mapper.reader().forType(returnClass).readValue(json);
 		}
 		catch (IOException e) {
 			logger.error(e.getMessage(), e);
@@ -53,7 +56,7 @@ public class Jsonizable {
 	public static <T> T read(byte[] json, Class<T> returnClass, ObjectMapper mapper) {
 
 		try {
-			return mapper.reader().withType(returnClass).readValue(json);
+			return mapper.reader().forType(returnClass).readValue(json);
 		}
 		catch (IOException e) {
 			logger.error(e.getMessage(), e);
@@ -85,6 +88,26 @@ public class Jsonizable {
 
 	public static String toJsonString(Object target) {
 		return toJsonString(new ObjectMapper(), target);
+	}
+
+	public String toJsonStringWithout(String... properties) {
+		String json = toJsonString();
+		if (properties == null) { return json; }
+
+		try {
+			JSONObject obj = new JSONObject(json);
+
+			for (String prop : properties) {
+				obj.remove(prop);
+			}
+
+			return obj.toString();
+		}
+		catch (JSONException e) {
+			logger.error(e.getMessage(), e);
+			return null;
+		}
+
 	}
 
 	public static String toJsonString(ObjectMapper mapper, Object target) {
