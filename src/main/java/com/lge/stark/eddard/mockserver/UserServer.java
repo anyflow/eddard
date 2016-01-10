@@ -1,16 +1,13 @@
 package com.lge.stark.eddard.mockserver;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import org.elasticsearch.action.get.GetResponse;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lge.stark.eddard.FaultException;
+import com.lge.stark.eddard.Jsonizable;
+import com.lge.stark.eddard.gateway.ElasticsearchGateway;
 import com.lge.stark.eddard.model.User;
 
-public class UserServer implements MockServer {
+public class UserServer {
 
 	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UserServer.class);
@@ -21,25 +18,15 @@ public class UserServer implements MockServer {
 		SELF = new UserServer();
 	}
 
-	private List<User> store;
+	public User get(String userId) throws FaultException {
+		GetResponse gr = ElasticsearchGateway.getClient().prepareGet("user", "user", userId).get();
 
-	@Override
-	public void load(String dataFilePath) throws IOException {
+		if (gr.isExists() == false) { return null; }
 
-		File file = new File(dataFilePath);
+		User ret = Jsonizable.read(gr.getSourceAsString(), User.class);
 
-		store = (new ObjectMapper()).readValue(file, new TypeReference<List<User>>() {
-		});
-	}
+		ret.setId(gr.getId());
 
-	@Override
-	public void save(String dataFilePath) throws JsonGenerationException, JsonMappingException, IOException {
-		(new ObjectMapper()).writer().writeValue(new File(dataFilePath), store);
-	}
-
-	public User get(String userId) {
-		return store.stream().filter(x -> {
-			return x.getId().equals(userId);
-		}).findFirst().get();
+		return ret;
 	}
 }

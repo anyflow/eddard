@@ -1,5 +1,6 @@
 package com.lge.stark.eddard.gateway;
 
+import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.mockserver.DeviceServer;
 
 public class DeviceGateway {
@@ -13,7 +14,7 @@ public class DeviceGateway {
 		SELF = new DeviceGateway();
 	}
 
-	public boolean isValid(String deviceId) {
+	public boolean isValid(String deviceId) throws FaultException {
 		return DeviceServer.SELF.isValid(deviceId);
 	}
 }
