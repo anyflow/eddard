@@ -6,19 +6,19 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.get.MultiGetItemResponse;
+import org.elasticsearch.action.get.MultiGetRequestBuilder;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
+import com.google.common.collect.Lists;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.Jsonizable;
 import com.lge.stark.eddard.gateway.ElasticsearchGateway;
 import com.lge.stark.eddard.model.Device;
 import com.lge.stark.eddard.model.Fault;
 import com.lge.stark.eddard.model.PushType;
-import com.lge.stark.eddard.mybatis.DeviceMapper;
-import com.lge.stark.eddard.mybatis.SqlConnector;
-import com.lge.stark.eddard.mybatis.SqlSessionEx;
 
 public class DeviceController {
 
@@ -30,14 +30,25 @@ public class DeviceController {
 		SELF = new DeviceController();
 	}
 
-	public List<Device> get(List<String> deviceIds) {
-		SqlSessionEx session = SqlConnector.openSession(true);
-		try {
-			return session.getMapper(DeviceMapper.class).selectIn(deviceIds);
+	public List<Device> get(List<String> deviceIds) throws FaultException {
+		Client client = ElasticsearchGateway.getClient();
+
+		MultiGetRequestBuilder builder = client.prepareMultiGet();
+		builder.add("stark", "device", deviceIds);
+
+		List<Device> ret = Lists.newArrayList();
+		for (MultiGetItemResponse res : builder.execute().actionGet()) {
+			if (res.getResponse().isExists() == false) {
+				continue;
+			}
+
+			Device item = Jsonizable.read(res.getResponse().getSourceAsString(), Device.class);
+			item.setId(res.getResponse().getId());
+
+			ret.add(item);
 		}
-		finally {
-			session.close();
-		}
+
+		return ret;
 	}
 
 	public void create(String deviceId, String receiverId, PushType type, boolean isActive) throws FaultException {
@@ -56,11 +67,6 @@ public class DeviceController {
 	}
 
 	public void updateStatus(String deviceId, boolean isActive) throws FaultException {
-		Device device = new Device();
-
-		device.setId(deviceId);
-		device.isActive(isActive);
-
 		Client client = ElasticsearchGateway.getClient();
 
 		try {
@@ -74,7 +80,6 @@ public class DeviceController {
 	}
 
 	public void delete(String deviceId) throws FaultException {
-
 		Client client = ElasticsearchGateway.getClient();
 
 		client.prepareDelete("stark", "device", deviceId).get();

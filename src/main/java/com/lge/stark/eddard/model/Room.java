@@ -10,7 +10,7 @@ public class Room extends Jsonizable {
 	private String id;
 	private String name;
 	private String secretKey;
-	private List<User> users;
+	private List<String> users;
 	private Date createDate;
 
 	public String getId() {
@@ -37,11 +37,11 @@ public class Room extends Jsonizable {
 		this.secretKey = secretKey;
 	}
 
-	public List<User> getUsers() {
+	public List<String> getUsers() {
 		return users;
 	}
 
-	public void setUsers(List<User> users) {
+	public void setUsers(List<String> users) {
 		this.users = users;
 	}
 

@@ -14,6 +14,7 @@ import com.google.inject.internal.Lists;
 import com.lge.stark.eddard.Server;
 import com.lge.stark.eddard.controller.DeviceController;
 import com.lge.stark.eddard.model.Device;
+import com.lge.stark.eddard.model.PushType;
 
 import io.netty.handler.codec.http.HttpHeaders.Names;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -25,24 +26,19 @@ import net.anyflow.menton.http.MockHttpClient;
 public class PutLoginTest {
 
 	private static String USER_ID = "37cd2cd5-0a1e-4641-9f5e-6096b16b64d5";
-	private static String DEVICE_ID = null;
+	private static String DEVICE_ID = "09bab373-ff80-42ca-a221-ba3e8345a469";
 	private static String DEVICE_ID2 = "f5455162-0004-433c-8e62-d0b75ccbc428";
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		DEVICE_ID = (new com.lge.stark.eddard.httphandler.device.PostTest()).registedDeviceId();
-
-		(new com.lge.stark.eddard.httphandler.device.PostTest()).regist(DEVICE_ID2);
+		DeviceController.SELF.create(DEVICE_ID, "testreceiverId", PushType.APNS, false);
+		DeviceController.SELF.create(DEVICE_ID2, "testreceiverId", PushType.APNS, false);
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		if (DEVICE_ID != null) {
-			(new com.lge.stark.eddard.httphandler.device.DeleteTest()).delete(DEVICE_ID);
-		}
-		if (DEVICE_ID2 != null) {
-			(new com.lge.stark.eddard.httphandler.device.DeleteTest()).delete(DEVICE_ID2);
-		}
+		DeviceController.SELF.delete(DEVICE_ID);
+		DeviceController.SELF.delete(DEVICE_ID2);
 	}
 
 	public String loginedUserId(String deviceId) throws Exception {

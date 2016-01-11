@@ -1,15 +1,21 @@
 package com.lge.stark.eddard.controller;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
-import com.lge.stark.eddard.IdGenerator;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.common.xcontent.XContentFactory;
+
+import com.lge.stark.eddard.FaultException;
+import com.lge.stark.eddard.gateway.ElasticsearchGateway;
+import com.lge.stark.eddard.model.Fault;
 import com.lge.stark.eddard.model.Message;
-import com.lge.stark.eddard.mybatis.MessageMapper;
-import com.lge.stark.eddard.mybatis.SqlSessionEx;
 
 public class MessageController {
 
-	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MessageController.class);
 
 	public final static MessageController SELF;
@@ -18,18 +24,38 @@ public class MessageController {
 		SELF = new MessageController();
 	}
 
-	public Message create(SqlSessionEx session, String roomId, String message, String creatorId) {
+	public Message create(String roomId, String message, String creatorId) throws FaultException {
 
 		Message ret = new Message();
 
-		ret.setId(IdGenerator.newId());
 		ret.setCreateDate(new Date());
 		ret.setCreatorId(creatorId);
 		ret.setMessage(message);
 		ret.setRoomId(roomId);
 
-		session.getMapper(MessageMapper.class).insertSelective(ret);
+		Client client = ElasticsearchGateway.getClient();
+
+		IndexResponse response = client.prepareIndex("stark", "message").setSource(ret.toJsonStringWithout("id"))
+				.execute().actionGet();
+
+		if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
+
+		ret.setId(response.getId());
 
 		return ret;
+	}
+
+	public void setUnreadCount(String messageId, int unreadCount) throws FaultException {
+		Client client = ElasticsearchGateway.getClient();
+
+		try {
+			client.update(new UpdateRequest("stark", "message", messageId)
+					.doc(XContentFactory.jsonBuilder().startObject().field("unreadCount", unreadCount).endObject()))
+					.get();
+		}
+		catch (InterruptedException | ExecutionException | IOException e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
+		}
 	}
 }

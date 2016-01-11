@@ -2,9 +2,14 @@ package com.lge.stark.eddard.model;
 
 import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.lge.stark.eddard.Jsonizable;
 
 public class MessageStatus extends Jsonizable {
+
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MessageStatus.class);
 
 	public enum Status {
 
@@ -89,5 +94,20 @@ public class MessageStatus extends Jsonizable {
 
 	public void setReadDate(Date readDate) {
 		this.readDate = readDate;
+	}
+
+	public String getId() {
+		JSONObject obj = new JSONObject();
+
+		try {
+			obj.put("messageId", messageId);
+			obj.put("deviceId", deviceId);
+
+			return obj.toString();
+		}
+		catch (JSONException e) {
+			logger.error(e.getMessage(), e);
+			return null;
+		}
 	}
 }

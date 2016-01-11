@@ -1,11 +1,21 @@
 package com.lge.stark.eddard.controller;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.google.inject.internal.Lists;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.IdGenerator;
+import com.lge.stark.eddard.Jsonizable;
+import com.lge.stark.eddard.gateway.ElasticsearchGateway;
 import com.lge.stark.eddard.gateway.PushGateway;
 import com.lge.stark.eddard.mockserver.ProfileServer;
 import com.lge.stark.eddard.model.Device;
@@ -13,13 +23,6 @@ import com.lge.stark.eddard.model.Fault;
 import com.lge.stark.eddard.model.Message;
 import com.lge.stark.eddard.model.MessageStatus;
 import com.lge.stark.eddard.model.Room;
-import com.lge.stark.eddard.model.RoomUserMap;
-import com.lge.stark.eddard.model.User;
-import com.lge.stark.eddard.mybatis.MessageStatusMapper;
-import com.lge.stark.eddard.mybatis.RoomMapper;
-import com.lge.stark.eddard.mybatis.RoomUserMapMapper;
-import com.lge.stark.eddard.mybatis.SqlConnector;
-import com.lge.stark.eddard.mybatis.SqlSessionEx;
 
 public class RoomController {
 
@@ -29,34 +32,6 @@ public class RoomController {
 
 	static {
 		SELF = new RoomController();
-	}
-
-	public Room get(String id) throws FaultException {
-		SqlSessionEx session = SqlConnector.openSession(true);
-
-		try {
-			Room ret = session.getMapper(RoomMapper.class).selectByPrimaryKey(id);
-
-			if (ret == null) { throw new FaultException(Fault.ROOM_001.replaceWith(id)); }
-
-			List<RoomUserMap> userIds = session.getMapper(RoomUserMapMapper.class).selectUsersOf(ret.getId());
-
-			List<User> users = Lists.newArrayList();
-
-			userIds.forEach(item -> {
-				User user = new User();
-				user.setId(item.getUserId());
-
-				users.add(user);
-			});
-
-			ret.setUsers(users);
-
-			return ret;
-		}
-		finally {
-			session.close();
-		}
 	}
 
 	public class RoomMessage {
@@ -69,111 +44,104 @@ public class RoomController {
 		}
 	}
 
+	public Room get(String id) throws FaultException {
+		return get(ElasticsearchGateway.getClient(), id);
+	}
+
+	public Room get(Client client, String id) throws FaultException {
+		GetResponse response = client.prepareGet("stark", "room", id).execute().actionGet();
+
+		if (response.isExists() == false) { return null; }
+
+		Room ret = Jsonizable.read(response.getSourceAsString(), Room.class);
+
+		ret.setId(response.getId());
+
+		return ret;
+	}
+
 	public RoomMessage create(String name, String inviterId, List<String> inviteeIds, String secretKey, String message)
 			throws FaultException {
+		return create(ElasticsearchGateway.getClient(), name, inviterId, inviteeIds, secretKey, message);
+	}
 
-		SqlSessionEx session = SqlConnector.openSession(false);
+	public RoomMessage create(Client client, String name, String inviterId, List<String> inviteeIds, String secretKey,
+			String message) throws FaultException {
+		List<String> users = Lists.newArrayList(inviteeIds);
+		users.add(inviterId);
 
-		try {
-			Room room = new Room();
+		Room room = new Room();
 
-			room.setId(IdGenerator.newId());
-			room.setName(name);
-			room.setSecretKey(secretKey);
-			room.setCreateDate(new Date());
+		room.setId(IdGenerator.newId());
+		room.setName(name);
+		room.setSecretKey(secretKey);
+		room.setCreateDate(new Date());
+		room.setUsers(users);
 
-			logger.debug("id : {}", room.getId());
+		IndexResponse response = client.prepareIndex("stark", "room").setSource(room.toJsonStringWithout("id"))
+				.execute().actionGet();
 
-			if (session.getMapper(RoomMapper.class)
-					.insertSelective(room) <= 0) { throw new FaultException(Fault.COMMON_001); }
+		if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
 
-			if (session.getMapper(RoomUserMapMapper.class).insert(
-					new RoomUserMap(room.getId(), inviterId)) <= 0) { throw new FaultException(Fault.COMMON_001); }
+		room.setId(response.getId());
 
-			Message msg = MessageController.SELF.create(session, room.getId(), message, inviterId);
+		Message msg = MessageController.SELF.create(room.getId(), message, inviterId);
 
-			for (String inviteeId : inviteeIds) {
-				List<String> deviceIds = ProfileServer.SELF.getDeviceIds(inviteeId);
+		for (String inviteeId : inviteeIds) {
+			List<String> deviceIds = ProfileServer.SELF.getDeviceIds(inviteeId);
 
-				List<Device> devices = DeviceController.SELF.get(deviceIds);
+			List<Device> devices = DeviceController.SELF.get(deviceIds);
 
-				if (devices == null || devices.size() <= 0) {
-					continue;
-				}
-
-				Device activeDevice = devices.stream().filter(item -> {
-					return item.isActive();
-				}).findFirst().orElse(null);
-
-				if (activeDevice == null) {
-					continue;
-				}
-
-				PushGateway.SELF.send(activeDevice.getType(), activeDevice.getReceiverId(), message);
-
-				MessageStatus ms = new MessageStatus();
-
-				ms.setMessageId(msg.getId());
-				ms.setDeviceId(activeDevice.getId());
-				ms.setStatus(MessageStatus.Status.PEND);
-				ms.setCreateDate(new Date());
-
-				if (session.getMapper(MessageStatusMapper.class).insert(ms) <= 0) {
-					logger.error("Unknown DB error occured : MessageStatus creation failed.");
-					continue;
-				}
-
-				msg.setUnreadCount(msg.getUnreadCount() + 1);
+			if (devices == null || devices.size() <= 0) {
+				continue;
 			}
 
-			session.commit();
+			Device activeDevice = devices.stream().filter(item -> {
+				return item.isActive();
+			}).findFirst().orElse(null);
 
-			return new RoomMessage(room, msg);
+			if (activeDevice == null) {
+				continue;
+			}
+
+			PushGateway.SELF.send(activeDevice.getType(), activeDevice.getReceiverId(), message);
+
+			MessageStatus ms = new MessageStatus();
+
+			ms.setMessageId(msg.getId());
+			ms.setDeviceId(activeDevice.getId());
+			ms.setStatus(MessageStatus.Status.PEND);
+			ms.setCreateDate(new Date());
+
+			response = client.prepareIndex("stark", "messageStatus", ms.getId()).setSource(ms.toJsonStringWithout("id"))
+					.execute().actionGet();
+
+			if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
+
+			MessageController.SELF.setUnreadCount(msg.getId(), msg.getUnreadCount() + 1);
 		}
-		finally {
-			session.close();
-		}
+
+		return new RoomMessage(room, msg);
 	}
 
 	public Room addUsers(String roomId, List<String> userIds) throws FaultException {
-		SqlSessionEx session = SqlConnector.openSession(false);
+		return addUsers(ElasticsearchGateway.getClient(), roomId, userIds);
+	}
+
+	public Room addUsers(Client client, String roomId, List<String> userIds) throws FaultException {
+		Room room = get(client, roomId);
+		room.getUsers().addAll(userIds);
 
 		try {
-			Room ret = session.getMapper(RoomMapper.class).selectByPrimaryKey(roomId);
-
-			if (ret == null) { throw new FaultException(Fault.ROOM_001.replaceWith(roomId)); }
-
-			List<RoomUserMap> userIdsPrev = session.getMapper(RoomUserMapMapper.class).selectUsersOf(ret.getId());
-
-			for (String userId : userIds) {
-				if (userIdsPrev.stream().anyMatch(x -> {
-					return x.getUserId().equals(userId);
-				})) {
-					continue;
-				}
-
-				RoomUserMap item = new RoomUserMap(roomId, userId);
-				userIdsPrev.add(item);
-
-				if (session.getMapper(RoomUserMapMapper.class)
-						.insert(item) <= 0) { throw new FaultException(Fault.COMMON_001); }
-			}
-
-			List<User> users = Lists.newArrayList();
-
-			userIdsPrev.forEach(item -> {
-				User user = new User();
-				user.setId(item.getUserId());
-
-				users.add(user);
-			});
-
-			ret.setUsers(users);
-
-			return ret;
+			client.update(new UpdateRequest("stark", "room", roomId)
+					.doc(XContentFactory.jsonBuilder().startObject().field("users", room.getUsers()).endObject()))
+					.get();
 		}
-		finally {
-			session.close();
+		catch (InterruptedException | ExecutionException | IOException e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
 		}
+
+		return room;
 	}
 }
