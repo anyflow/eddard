@@ -1,8 +1,6 @@
 package com.lge.stark.eddard.controller;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -35,8 +33,15 @@ public class MessageController {
 
 		Client client = ElasticsearchGateway.getClient();
 
-		IndexResponse response = client.prepareIndex("stark", "message").setSource(ret.toJsonStringWithout("id"))
-				.execute().actionGet();
+		IndexResponse response;
+		try {
+			response = client.prepareIndex("stark", "message").setSource(ret.toJsonStringWithout("id")).execute()
+					.actionGet();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
+		}
 
 		if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
 
@@ -53,7 +58,7 @@ public class MessageController {
 					.doc(XContentFactory.jsonBuilder().startObject().field("unreadCount", unreadCount).endObject()))
 					.get();
 		}
-		catch (InterruptedException | ExecutionException | IOException e) {
+		catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new FaultException(Fault.COMMON_000);
 		}

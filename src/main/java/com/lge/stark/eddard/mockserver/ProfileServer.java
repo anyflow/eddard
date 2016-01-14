@@ -9,10 +9,10 @@ import org.elasticsearch.search.SearchHit;
 import com.google.common.collect.Lists;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.gateway.ElasticsearchGateway;
+import com.lge.stark.eddard.model.Fault;
 
 public class ProfileServer {
 
-	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProfileServer.class);
 
 	public final static ProfileServer SELF;
@@ -26,8 +26,15 @@ public class ProfileServer {
 	}
 
 	public List<String> getDeviceIds(String userId) throws FaultException {
-		SearchResponse response = ElasticsearchGateway.getClient().prepareSearch("profile")
-				.setQuery(QueryBuilders.matchQuery("userId", userId)).execute().actionGet();
+		SearchResponse response;
+		try {
+			response = ElasticsearchGateway.getClient().prepareSearch("profile")
+					.setQuery(QueryBuilders.matchQuery("userId", userId)).execute().actionGet();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
+		}
 
 		List<String> ret = Lists.newArrayList();
 
@@ -41,8 +48,15 @@ public class ProfileServer {
 	}
 
 	public List<String> getUserIds(String deviceId) throws FaultException {
-		SearchResponse response = ElasticsearchGateway.getClient().prepareSearch("profile")
-				.setQuery(QueryBuilders.matchQuery("deviceId", deviceId)).execute().actionGet();
+		SearchResponse response;
+		try {
+			response = ElasticsearchGateway.getClient().prepareSearch("profile")
+					.setQuery(QueryBuilders.matchQuery("deviceId", deviceId)).execute().actionGet();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
+		}
 
 		List<String> ret = Lists.newArrayList();
 

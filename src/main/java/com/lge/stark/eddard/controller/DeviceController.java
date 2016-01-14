@@ -1,13 +1,10 @@
 package com.lge.stark.eddard.controller;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetRequestBuilder;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -62,8 +59,14 @@ public class DeviceController {
 
 		Client client = ElasticsearchGateway.getClient();
 
-		IndexResponse response = client.prepareIndex("stark", "device", device.getId())
-				.setSource(device.toJsonStringWithout("id", "userId")).execute().actionGet();
+		try {
+			client.prepareIndex("stark", "device", device.getId()).setSource(device.toJsonStringWithout("id", "userId"))
+					.execute().actionGet();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
+		}
 	}
 
 	public void updateStatus(String deviceId, boolean isActive) throws FaultException {
@@ -73,7 +76,7 @@ public class DeviceController {
 			client.update(new UpdateRequest("stark", "device", deviceId)
 					.doc(XContentFactory.jsonBuilder().startObject().field("active", isActive).endObject())).get();
 		}
-		catch (InterruptedException | ExecutionException | IOException e) {
+		catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new FaultException(Fault.COMMON_000);
 		}
@@ -82,6 +85,12 @@ public class DeviceController {
 	public void delete(String deviceId) throws FaultException {
 		Client client = ElasticsearchGateway.getClient();
 
-		client.prepareDelete("stark", "device", deviceId).get();
+		try {
+			client.prepareDelete("stark", "device", deviceId).get();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
+		}
 	}
 }

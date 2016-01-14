@@ -1,9 +1,7 @@
 package com.lge.stark.eddard.controller;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
@@ -49,7 +47,14 @@ public class RoomController {
 	}
 
 	public Room get(Client client, String id) throws FaultException {
-		GetResponse response = client.prepareGet("stark", "room", id).execute().actionGet();
+		GetResponse response;
+		try {
+			response = client.prepareGet("stark", "room", id).execute().actionGet();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
+		}
 
 		if (response.isExists() == false) { return null; }
 
@@ -78,8 +83,15 @@ public class RoomController {
 		room.setCreateDate(new Date());
 		room.setUsers(users);
 
-		IndexResponse response = client.prepareIndex("stark", "room").setSource(room.toJsonStringWithout("id"))
-				.execute().actionGet();
+		IndexResponse response;
+		try {
+			response = client.prepareIndex("stark", "room").setSource(room.toJsonStringWithout("id")).execute()
+					.actionGet();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
+		}
 
 		if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
 
@@ -137,7 +149,7 @@ public class RoomController {
 					.doc(XContentFactory.jsonBuilder().startObject().field("users", room.getUsers()).endObject()))
 					.get();
 		}
-		catch (InterruptedException | ExecutionException | IOException e) {
+		catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new FaultException(Fault.COMMON_000);
 		}
