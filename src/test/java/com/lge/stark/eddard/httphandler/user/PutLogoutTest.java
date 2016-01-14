@@ -9,7 +9,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.inject.internal.Lists;
 import com.lge.stark.eddard.Server;
 import com.lge.stark.eddard.controller.DeviceController;
 import com.lge.stark.eddard.model.Device;
@@ -56,7 +55,7 @@ public class PutLogoutTest {
 
 		assertThat(response.getStatus(), is(HttpResponseStatus.OK));
 
-		List<Device> devices = DeviceController.SELF.get(Lists.newArrayList(new String[] { DEVICE_ID, DEVICE_ID2 }));
+		List<Device> devices = DeviceController.SELF.get(DEVICE_ID, DEVICE_ID2);
 
 		assertThat(devices.size(), is(2));
 	}

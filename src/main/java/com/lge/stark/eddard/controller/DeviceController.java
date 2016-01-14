@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetRequestBuilder;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -30,7 +30,7 @@ public class DeviceController {
 		SELF = new DeviceController();
 	}
 
-	public List<Device> get(List<String> deviceIds) throws FaultException {
+	public List<Device> get(String... deviceIds) throws FaultException {
 		Client client = ElasticsearchGateway.getClient();
 
 		MultiGetRequestBuilder builder = client.prepareMultiGet();
@@ -62,8 +62,8 @@ public class DeviceController {
 
 		Client client = ElasticsearchGateway.getClient();
 
-		client.prepareIndex("stark", "device", device.getId()).setSource(device.toJsonStringWithout("id", "userId"))
-				.execute().actionGet();
+		IndexResponse response = client.prepareIndex("stark", "device", device.getId())
+				.setSource(device.toJsonStringWithout("id", "userId")).execute().actionGet();
 	}
 
 	public void updateStatus(String deviceId, boolean isActive) throws FaultException {
@@ -83,19 +83,5 @@ public class DeviceController {
 		Client client = ElasticsearchGateway.getClient();
 
 		client.prepareDelete("stark", "device", deviceId).get();
-	}
-
-	public Device get(String deviceId) throws FaultException {
-		Client client = ElasticsearchGateway.getClient();
-
-		GetResponse response = client.prepareGet("stark", "device", deviceId).execute().actionGet();
-
-		if (response.isExists() == false) { return null; }
-
-		Device ret = Jsonizable.read(response.getSourceAsString(), Device.class);
-
-		ret.setId(response.getId());
-
-		return ret;
 	}
 }

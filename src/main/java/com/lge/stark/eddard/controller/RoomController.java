@@ -60,13 +60,13 @@ public class RoomController {
 		return ret;
 	}
 
-	public RoomMessage create(String name, String inviterId, List<String> inviteeIds, String secretKey, String message)
+	public RoomMessage create(String name, String secretKey, String message, String inviterId, String... inviteeIds)
 			throws FaultException {
-		return create(ElasticsearchGateway.getClient(), name, inviterId, inviteeIds, secretKey, message);
+		return create(ElasticsearchGateway.getClient(), name, secretKey, message, inviterId, inviteeIds);
 	}
 
-	public RoomMessage create(Client client, String name, String inviterId, List<String> inviteeIds, String secretKey,
-			String message) throws FaultException {
+	public RoomMessage create(Client client, String name, String secretKey, String message, String inviterId,
+			String... inviteeIds) throws FaultException {
 		List<String> users = Lists.newArrayList(inviteeIds);
 		users.add(inviterId);
 
@@ -90,7 +90,7 @@ public class RoomController {
 		for (String inviteeId : inviteeIds) {
 			List<String> deviceIds = ProfileServer.SELF.getDeviceIds(inviteeId);
 
-			List<Device> devices = DeviceController.SELF.get(deviceIds);
+			List<Device> devices = DeviceController.SELF.get(deviceIds.toArray(new String[0]));
 
 			if (devices == null || devices.size() <= 0) {
 				continue;
@@ -124,13 +124,13 @@ public class RoomController {
 		return new RoomMessage(room, msg);
 	}
 
-	public Room addUsers(String roomId, List<String> userIds) throws FaultException {
+	public Room addUsers(String roomId, String... userIds) throws FaultException {
 		return addUsers(ElasticsearchGateway.getClient(), roomId, userIds);
 	}
 
-	public Room addUsers(Client client, String roomId, List<String> userIds) throws FaultException {
+	public Room addUsers(Client client, String roomId, String... userIds) throws FaultException {
 		Room room = get(client, roomId);
-		room.getUsers().addAll(userIds);
+		room.getUsers().addAll(Lists.newArrayList(userIds));
 
 		try {
 			client.update(new UpdateRequest("stark", "room", roomId)

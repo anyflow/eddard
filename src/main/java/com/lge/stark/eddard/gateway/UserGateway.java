@@ -25,13 +25,17 @@ public class UserGateway {
 	public void login(String userId, String deviceId) throws FaultException {
 		if (UserServer.SELF.get(userId) == null) { throw new FaultException(Fault.USER_002.replaceWith(userId)); }
 
-		List<Device> devices = DeviceController.SELF.get(Lists.newArrayList(deviceId));
+		List<Device> devices = DeviceController.SELF.get(deviceId);
 		if (devices == null
 				|| devices.size() <= 0) { throw new FaultException(Fault.DEVICE_002.replaceWith(deviceId)); }
 
 		List<String> deviceIds = ProfileServer.SELF.getDeviceIds(userId);
 
 		for (String item : deviceIds) {
+			if (DeviceController.SELF.get(item).isEmpty()) {
+				continue;
+			}
+
 			DeviceController.SELF.updateStatus(item, item.equals(deviceId));
 		}
 	}

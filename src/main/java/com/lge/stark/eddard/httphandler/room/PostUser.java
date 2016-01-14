@@ -38,7 +38,7 @@ public class PostUser extends RequestHandler {
 				userIds.add(usersJson.get(i).toString());
 			}
 
-			return RoomController.SELF.addUsers(roomId, userIds).toJsonString();
+			return RoomController.SELF.addUsers(roomId, userIds.toArray(new String[0])).toJsonString();
 		}
 		catch (FaultException fe) {
 			logger.error(fe.getMessage(), fe);
