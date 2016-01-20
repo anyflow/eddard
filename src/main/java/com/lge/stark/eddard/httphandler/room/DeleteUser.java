@@ -1,12 +1,12 @@
 package com.lge.stark.eddard.httphandler.room;
 
-import net.anyflow.menton.http.RequestHandler;
+import net.anyflow.menton.http.HttpRequestHandler;
 
 /**
  * @author Park Hyunjeong
  */
-@RequestHandler.Handles(paths = { "room/{roomId}/user/{userId}" }, httpMethods = { "DELETE" })
-public class DeleteUser extends RequestHandler {
+@HttpRequestHandler.Handles(paths = { "room/{roomId}/user/{userId}" }, httpMethods = { "DELETE" })
+public class DeleteUser extends HttpRequestHandler {
 
 	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DeleteUser.class);

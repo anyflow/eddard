@@ -9,13 +9,13 @@ import com.lge.stark.eddard.model.Fault;
 import com.lge.stark.eddard.model.Message;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
-import net.anyflow.menton.http.RequestHandler;
+import net.anyflow.menton.http.HttpRequestHandler;
 
 /**
  * @author Park Hyunjeong
  */
-@RequestHandler.Handles(paths = { "room/{id}/message" }, httpMethods = { "GET" })
-public class GetMessage extends RequestHandler {
+@HttpRequestHandler.Handles(paths = { "room/{id}/message" }, httpMethods = { "GET" })
+public class GetMessage extends HttpRequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(GetMessage.class);
 

@@ -7,13 +7,13 @@ import com.lge.stark.eddard.Jsonizable;
 import com.lge.stark.eddard.gateway.UserGateway;
 import com.lge.stark.eddard.model.User;
 
-import net.anyflow.menton.http.RequestHandler;
+import net.anyflow.menton.http.HttpRequestHandler;
 
 /**
  * @author Park Hyunjeong
  */
-@RequestHandler.Handles(paths = { "user/{id}/friend" }, httpMethods = { "GET" })
-public class GetFriend extends RequestHandler {
+@HttpRequestHandler.Handles(paths = { "user/{id}/friend" }, httpMethods = { "GET" })
+public class GetFriend extends HttpRequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(GetFriend.class);
 

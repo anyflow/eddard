@@ -3,13 +3,13 @@ package com.lge.stark.eddard.httphandler.user;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.gateway.UserGateway;
 
-import net.anyflow.menton.http.RequestHandler;
+import net.anyflow.menton.http.HttpRequestHandler;
 
 /**
  * @author Park Hyunjeong
  */
-@RequestHandler.Handles(paths = { "user/{id}/logout" }, httpMethods = { "PUT" })
-public class PutLogout extends RequestHandler {
+@HttpRequestHandler.Handles(paths = { "user/{id}/logout" }, httpMethods = { "PUT" })
+public class PutLogout extends HttpRequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PutLogout.class);
 

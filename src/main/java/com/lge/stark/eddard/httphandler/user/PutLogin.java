@@ -9,13 +9,13 @@ import com.lge.stark.eddard.model.Fault;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
-import net.anyflow.menton.http.RequestHandler;
+import net.anyflow.menton.http.HttpRequestHandler;
 
 /**
  * @author Park Hyunjeong
  */
-@RequestHandler.Handles(paths = { "user/{id}/login" }, httpMethods = { "PUT" })
-public class PutLogin extends RequestHandler {
+@HttpRequestHandler.Handles(paths = { "user/{id}/login" }, httpMethods = { "PUT" })
+public class PutLogin extends HttpRequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PutLogin.class);
 

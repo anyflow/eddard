@@ -10,10 +10,10 @@ import com.lge.stark.eddard.model.PushType;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
-import net.anyflow.menton.http.RequestHandler;
+import net.anyflow.menton.http.HttpRequestHandler;
 
-@RequestHandler.Handles(paths = { "device" }, httpMethods = { "POST" })
-public class Post extends RequestHandler {
+@HttpRequestHandler.Handles(paths = { "device" }, httpMethods = { "POST" })
+public class Post extends HttpRequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Post.class);
 

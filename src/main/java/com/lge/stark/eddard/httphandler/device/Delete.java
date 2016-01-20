@@ -3,10 +3,10 @@ package com.lge.stark.eddard.httphandler.device;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.controller.DeviceController;
 
-import net.anyflow.menton.http.RequestHandler;
+import net.anyflow.menton.http.HttpRequestHandler;
 
-@RequestHandler.Handles(paths = { "device/{id}" }, httpMethods = { "DELETE" })
-public class Delete extends RequestHandler {
+@HttpRequestHandler.Handles(paths = { "device/{id}" }, httpMethods = { "DELETE" })
+public class Delete extends HttpRequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Delete.class);
 
