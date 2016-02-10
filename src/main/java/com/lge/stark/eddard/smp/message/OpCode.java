@@ -39,6 +39,8 @@ public enum OpCode {
 		FRAMECLASS_MAPPER = Maps.newHashMap();
 
 		FRAMECLASS_MAPPER.put(CONNECT, Connect.class);
+		FRAMECLASS_MAPPER.put(IS_ALIVE, IsAlive.class);
+		FRAMECLASS_MAPPER.put(RETURN_OK, ReturnOk.class);
 	}
 
 	public static OpCode from(int id) {
