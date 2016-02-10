@@ -7,8 +7,9 @@ import java.io.IOException;
 import javax.xml.parsers.FactoryConfigurationError;
 
 import com.lge.stark.eddard.gateway.PushGateway;
+import com.lge.stark.eddard.smp.message.handler.SmpPacketRouter;
 
-import net.anyflow.menton.http.HttpServer;
+import net.anyflow.menton.http.WebServer;
 
 public class Entrypoint {
 
@@ -27,7 +28,7 @@ public class Entrypoint {
 		}
 	}
 
-	private final HttpServer httpServer = new HttpServer();
+	private final WebServer httpServer = new WebServer();
 
 	public boolean start() {
 		try {
@@ -35,7 +36,7 @@ public class Entrypoint {
 
 			logger.info("Starting Eddard...");
 
-			httpServer.start("com.lge.stark.eddard.httphandler");
+			httpServer.start("com.lge.stark.eddard.httphandler", SmpPacketRouter.class);
 
 			PushGateway.SELF.start();
 
