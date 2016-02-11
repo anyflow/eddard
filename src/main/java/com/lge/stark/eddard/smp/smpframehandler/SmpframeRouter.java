@@ -1,12 +1,12 @@
-package com.lge.stark.eddard.smp.message.handler;
+package com.lge.stark.eddard.smp.smpframehandler;
 
 import java.util.List;
 
 import com.lge.stark.eddard.Settings;
-import com.lge.stark.eddard.smp.message.ErrorInvalidSmpframeFormat;
-import com.lge.stark.eddard.smp.message.Smpframe;
 import com.lge.stark.eddard.smp.session.Session;
 import com.lge.stark.eddard.smp.session.SessionNexus;
+import com.lge.stark.eddard.smp.smpframe.ErrorInvalidSmpframeFormat;
+import com.lge.stark.eddard.smp.smpframe.Smpframe;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,9 +14,9 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import net.anyflow.menton.http.WebsocketFrameHandler;
 
-public class SmpPacketRouter extends WebsocketFrameHandler {
+public class SmpframeRouter extends WebsocketFrameHandler {
 
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SmpPacketRouter.class);
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SmpframeRouter.class);
 
 	@Override
 	public String subprotocols() {
@@ -43,6 +43,9 @@ public class SmpPacketRouter extends WebsocketFrameHandler {
 		ctx.pipeline().addLast(new ConnectHandler());
 		ctx.pipeline().addLast(new IsAliveHandler());
 		ctx.pipeline().addLast(new CloseSessionHandler());
+		ctx.pipeline().addLast(new RegisterDeviceHandler());
+		ctx.pipeline().addLast(new DeleteDeviceHandler());
+		ctx.pipeline().addLast(new UpdateDeviceStatusHandler());
 	}
 
 	@Override

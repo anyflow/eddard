@@ -2,7 +2,7 @@ package com.lge.stark.eddard.smp.session;
 
 import java.util.Date;
 
-import com.lge.stark.eddard.smp.message.Smpframe;
+import com.lge.stark.eddard.smp.smpframe.Smpframe;
 
 public interface ResponseArrivedListener {
 

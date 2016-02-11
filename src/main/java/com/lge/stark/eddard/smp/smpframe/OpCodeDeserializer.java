@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.smp.message;
+package com.lge.stark.eddard.smp.smpframe;
 
 import java.io.IOException;
 

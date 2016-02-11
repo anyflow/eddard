@@ -15,7 +15,7 @@ import com.lge.stark.eddard.IdGenerator;
 import com.lge.stark.eddard.Jsonizable;
 import com.lge.stark.eddard.Literals;
 import com.lge.stark.eddard.Settings;
-import com.lge.stark.eddard.smp.message.Smpframe;
+import com.lge.stark.eddard.smp.smpframe.Smpframe;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
