@@ -3,7 +3,7 @@ package com.lge.stark.eddard.smp.smpframehandler;
 import com.lge.stark.eddard.FaultException;
 import com.lge.stark.eddard.controller.DeviceController;
 import com.lge.stark.eddard.smp.session.Session;
-import com.lge.stark.eddard.smp.smpframe.ErrorInternalUnknown;
+import com.lge.stark.eddard.smp.smpframe.ErrorStarkService;
 import com.lge.stark.eddard.smp.smpframe.RegisterDevice;
 import com.lge.stark.eddard.smp.smpframe.ReturnOk;
 
@@ -25,7 +25,7 @@ public class RegisterDeviceHandler extends SmpframeHandler<RegisterDevice> {
 		catch (FaultException e) {
 			logger.error(e.getMessage(), e);
 
-			session.send(new ErrorInternalUnknown(session.id(), smpframe.responseSmpframeId()));
+			session.send(new ErrorStarkService(session.id(), smpframe.responseSmpframeId(), e.fault()));
 		}
 	}
 }

@@ -11,7 +11,7 @@ import com.google.common.collect.Maps;
 public enum OpCode {
 
 	// 0 ~ 49 client to server code
-	CONNECT(0, "Connect to Server"),
+	INITIALIZE(0, "Session initialization"),
 
 	// 50 ~ 99 server to client code
 	SEND_NOTIFICATION_MESSAGE(50, "Sends a notification message"), 
@@ -36,14 +36,17 @@ public enum OpCode {
 	
 	REGISTER_DEVICE(300, "Register a device"),
 	DELETE_DEVICE(301, "Delete a device"),
-	UPDATE_DEVICE_STATUS(302, "Update status of a device");
+	UPDATE_DEVICE_STATUS(302, "Update status of a device"),
+	GET_FRIENDS(303, "Get friends"),
+	
+	RES_GET_FRIENDS(353, "Return of GET_FRIEND");
 	
 	private static final Map<OpCode, Class<? extends Smpframe>> FRAMECLASS_MAPPER;
 
 	static {
 		FRAMECLASS_MAPPER = Maps.newHashMap();
 		
-        FRAMECLASS_MAPPER.put(CONNECT, Connect.class);
+        FRAMECLASS_MAPPER.put(INITIALIZE, Initialize.class);
         FRAMECLASS_MAPPER.put(SET_HEARTBEAT_RATE, SetHeartbeatRate.class);
         FRAMECLASS_MAPPER.put(REDIRECT, Redirect.class);
         FRAMECLASS_MAPPER.put(CLOSE_SESSION, CloseSession.class);
@@ -60,6 +63,9 @@ public enum OpCode {
 		FRAMECLASS_MAPPER.put(REGISTER_DEVICE, RegisterDevice.class);
 		FRAMECLASS_MAPPER.put(DELETE_DEVICE, DeleteDevice.class);
 		FRAMECLASS_MAPPER.put(UPDATE_DEVICE_STATUS, UpdateDeviceStatus.class);
+		FRAMECLASS_MAPPER.put(GET_FRIENDS, GetFriends.class);
+
+		FRAMECLASS_MAPPER.put(RES_GET_FRIENDS, ResGetFriends.class);
 	}
 
 	public static OpCode from(int id) {

@@ -4,9 +4,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lge.stark.eddard.model.PushType;
 
 public class RegisterDevice extends Smpframe {
+
+	@JsonProperty("deviceId")
 	String deviceId;
+
+	@JsonProperty("receiverId")
 	String receiverId;
+
+	@JsonProperty("pushType")
 	PushType pushType;
+
+	@JsonProperty("isActive")
 	boolean isActive;
 
 	public RegisterDevice() {
@@ -15,22 +23,18 @@ public class RegisterDevice extends Smpframe {
 		opcode(OpCode.REGISTER_DEVICE);
 	}
 
-	@JsonProperty("deviceId")
 	public String deviceId() {
 		return deviceId;
 	}
 
-	@JsonProperty("receiverId")
 	public String receiverId() {
 		return receiverId;
 	}
 
-	@JsonProperty("pushType")
 	public PushType pushType() {
 		return pushType;
 	}
 
-	@JsonProperty("isActive")
 	public boolean isActive() {
 		return isActive;
 	}
@@ -43,11 +47,11 @@ public class RegisterDevice extends Smpframe {
 		this.receiverId = receiverId;
 	}
 
-	public void deviceId(PushType pushType) {
+	public void pushType(PushType pushType) {
 		this.pushType = pushType;
 	}
 
-	public void deviceId(boolean isActive) {
+	public void isActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 

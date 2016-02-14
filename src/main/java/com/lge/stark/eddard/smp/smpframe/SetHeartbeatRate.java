@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SetHeartbeatRate extends Smpframe {
 
+	@JsonProperty("heartbeatRate")
 	private int heartbeatRate; // second unit
 
-	@JsonProperty("heartbeatRate")
 	public int heartbeatRate() {
 		return heartbeatRate;
 	}

@@ -3,6 +3,8 @@ package com.lge.stark.eddard.smp.smpframe;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DeleteDevice extends Smpframe {
+
+	@JsonProperty("deviceId")
 	String deviceId;
 
 	public DeleteDevice() {
@@ -11,7 +13,6 @@ public class DeleteDevice extends Smpframe {
 		opcode(OpCode.DELETE_DEVICE);
 	}
 
-	@JsonProperty("deviceId")
 	public String deviceId() {
 		return deviceId;
 	}

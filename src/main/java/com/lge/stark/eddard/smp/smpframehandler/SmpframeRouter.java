@@ -40,12 +40,13 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-		ctx.pipeline().addLast(new ConnectHandler());
+		ctx.pipeline().addLast(new InitializeHandler());
 		ctx.pipeline().addLast(new IsAliveHandler());
 		ctx.pipeline().addLast(new CloseSessionHandler());
 		ctx.pipeline().addLast(new RegisterDeviceHandler());
 		ctx.pipeline().addLast(new DeleteDeviceHandler());
 		ctx.pipeline().addLast(new UpdateDeviceStatusHandler());
+		ctx.pipeline().addLast(new GetFriendsHandler());
 	}
 
 	@Override
@@ -60,8 +61,11 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 			return;
 		}
 
+		TextWebSocketFrame frame = (TextWebSocketFrame) msg;
+		logger.debug("textFrame received : {}", frame.text());
+
 		try {
-			out.add(Smpframe.createFrom(((TextWebSocketFrame) msg).text()));
+			out.add(Smpframe.createFrom(frame.text()));
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(), e);

@@ -2,23 +2,25 @@ package com.lge.stark.eddard.smp.smpframe;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Connect extends Smpframe {
+public class Initialize extends Smpframe {
 
+	@JsonProperty("deviceId")
 	private String deviceId;
+
+	@JsonProperty("networkType")
 	private String networkType;
 
-	public Connect() {
-		super(OpCode.CONNECT, null, null);
+	public Initialize() {
+		super(OpCode.INITIALIZE, null, null);
 	}
 
-	public Connect(int smpframeId, String deviceId, String networkType) {
-		super(OpCode.CONNECT, null, smpframeId);
+	public Initialize(int smpframeId, String deviceId, String networkType) {
+		super(OpCode.INITIALIZE, null, smpframeId);
 
 		this.deviceId = deviceId;
 		this.networkType = networkType;
 	}
 
-	@JsonProperty("deviceId")
 	public String deviceId() {
 		return deviceId;
 	}
@@ -27,7 +29,6 @@ public class Connect extends Smpframe {
 		this.deviceId = deviceId;
 	}
 
-	@JsonProperty("networkType")
 	public String networkType() {
 		return networkType;
 	}

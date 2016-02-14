@@ -18,12 +18,14 @@ public abstract class SmpframeHandler<T extends Smpframe> extends SimpleChannelI
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, T msg) throws Exception {
+		logger.debug("handing {} Smpframe...", msg.getClass().getSimpleName());
+
 		Session session = null;
 
 		try {
 			session = SessionNexus.SELF.get(msg.sessionId());
 
-			if (msg.opcode().id() != OpCode.CONNECT.id() && session == null) {
+			if (msg.opcode().id() != OpCode.INITIALIZE.id() && session == null) {
 				ctx.writeAndFlush(
 						new TextWebSocketFrame(new ErrorNoSessionAllocated(msg.responseSmpframeId()).toJsonString()))
 						.addListener(ChannelFutureListener.CLOSE);

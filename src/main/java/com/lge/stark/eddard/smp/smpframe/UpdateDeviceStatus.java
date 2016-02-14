@@ -3,7 +3,11 @@ package com.lge.stark.eddard.smp.smpframe;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UpdateDeviceStatus extends Smpframe {
+
+	@JsonProperty("deviceId")
 	String deviceId;
+
+	@JsonProperty("isActive")
 	boolean isActive;
 
 	public UpdateDeviceStatus() {
@@ -12,12 +16,10 @@ public class UpdateDeviceStatus extends Smpframe {
 		opcode(OpCode.UPDATE_DEVICE_STATUS);
 	}
 
-	@JsonProperty("deviceId")
 	public String deviceId() {
 		return deviceId;
 	}
 
-	@JsonProperty("isActive")
 	public boolean isActive() {
 		return isActive;
 	}

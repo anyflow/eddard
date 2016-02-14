@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Redirect extends Smpframe {
 
+	@JsonProperty("address")
 	private String address;
 
-	@JsonProperty("address")
 	public String address() {
 		return address;
 	}

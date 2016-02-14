@@ -5,7 +5,10 @@ import com.lge.stark.eddard.model.Fault;
 
 public class ErrorStarkService extends Smpframe {
 
+	@JsonProperty("code")
 	String code;
+
+	@JsonProperty("description")
 	String description;
 
 	public ErrorStarkService() {
@@ -19,12 +22,10 @@ public class ErrorStarkService extends Smpframe {
 		this.description = fault.description();
 	}
 
-	@JsonProperty("code")
 	public String code() {
 		return code;
 	}
 
-	@JsonProperty("description")
 	public String description() {
 		return description;
 	}
