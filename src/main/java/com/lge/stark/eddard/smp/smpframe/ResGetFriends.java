@@ -20,10 +20,6 @@ public class ResGetFriends extends Smpframe {
 		this.users = users;
 	}
 
-	public List<User> users() {
-		return users;
-	}
-
 	@Override
 	public boolean isResponseRequired() {
 		return false;

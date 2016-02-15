@@ -15,10 +15,6 @@ public class GetFriends extends Smpframe {
 		return userId;
 	}
 
-	public void userId(String userId) {
-		this.userId = userId;
-	}
-
 	@Override
 	public boolean isResponseRequired() {
 		return true;
