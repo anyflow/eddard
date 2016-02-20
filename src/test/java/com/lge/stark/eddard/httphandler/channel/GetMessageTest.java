@@ -35,7 +35,8 @@ public class GetMessageTest {
 
 	@Test
 	public void testService() throws Exception {
-		IHttpClient client = new MockHttpClient(Server.SERVER, Server.BASE_URI + "/channel/" + CHANNEL_ID + "/message");
+		IHttpClient client = new MockHttpClient(Server.SERVER,
+				Server.BASE_URI + "/channel/" + CHANNEL_ID + "/messages");
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 

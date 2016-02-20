@@ -35,7 +35,7 @@ public class MessageController {
 		ret.setCreateDate(new Date());
 		ret.setCreatorId(creatorId);
 		ret.setText(message);
-		ret.setRoomId(roomId);
+		ret.setChannelId(roomId);
 
 		Client client = ElasticsearchGateway.getClient();
 

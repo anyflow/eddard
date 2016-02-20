@@ -85,7 +85,7 @@ public class ChannelController {
 
 		IndexResponse response;
 		try {
-			response = client.prepareIndex("stark", "room").setSource(channel.toJsonStringWithout("id")).execute()
+			response = client.prepareIndex("stark", "channel").setSource(channel.toJsonStringWithout("id")).execute()
 					.actionGet();
 		}
 		catch (Exception e) {

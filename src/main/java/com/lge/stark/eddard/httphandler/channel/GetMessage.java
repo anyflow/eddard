@@ -14,7 +14,7 @@ import net.anyflow.menton.http.HttpRequestHandler;
 /**
  * @author Park Hyunjeong
  */
-@HttpRequestHandler.Handles(paths = { "channel/{id}/message" }, httpMethods = { "GET" })
+@HttpRequestHandler.Handles(paths = { "channel/{id}/messages" }, httpMethods = { "GET" })
 public class GetMessage extends HttpRequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(GetMessage.class);

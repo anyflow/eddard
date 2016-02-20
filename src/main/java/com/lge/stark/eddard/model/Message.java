@@ -6,7 +6,7 @@ import com.lge.stark.eddard.Jsonizable;
 
 public class Message extends Jsonizable {
 	private String id;
-	private String roomId;
+	private String channelId;
 	private String creatorId;
 	private String text;
 	private int unreadCount = 0;
@@ -20,12 +20,12 @@ public class Message extends Jsonizable {
 		this.id = id;
 	}
 
-	public String getRoomId() {
-		return roomId;
+	public String getChannelId() {
+		return channelId;
 	}
 
-	public void setRoomId(String roomId) {
-		this.roomId = roomId;
+	public void setChannelId(String channelId) {
+		this.channelId = channelId;
 	}
 
 	public String getCreatorId() {
