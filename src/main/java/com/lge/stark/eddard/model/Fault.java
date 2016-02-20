@@ -12,7 +12,7 @@ public enum Fault {
 	DEVICE_001("DEVICE.001", "The Device ID(${replacer}) is already exist.", HttpResponseStatus.BAD_REQUEST), 
 	DEVICE_002("DEVICE.002", "Invalid Device ID(${replacer}).", HttpResponseStatus.BAD_REQUEST),
 
-	ROOM_001("ROOM.001", "The room(${replacer}) is not found.", HttpResponseStatus.BAD_REQUEST),
+	CHANNEL_001("CHANNEL.001", "The channel(${replacer}) is not found.", HttpResponseStatus.BAD_REQUEST),
 
 	USER_002("USER.002", "Invalid User ID(${replacer}).", HttpResponseStatus.BAD_REQUEST);
 

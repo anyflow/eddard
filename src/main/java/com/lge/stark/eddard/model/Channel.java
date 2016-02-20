@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.lge.stark.eddard.Jsonizable;
 
-public class Room extends Jsonizable {
+public class Channel extends Jsonizable {
 
 	private String id;
 	private String name;

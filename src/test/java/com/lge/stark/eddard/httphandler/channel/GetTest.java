@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.httphandler.room;
+package com.lge.stark.eddard.httphandler.channel;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -18,15 +18,13 @@ import net.anyflow.menton.http.HttpResponse;
 import net.anyflow.menton.http.IHttpClient;
 import net.anyflow.menton.http.MockHttpClient;
 
-public class GetMessageTest {
+public class GetTest {
 
-	private static String ROOM_ID;
+	private static String CHANNEL_ID;
 
-	@SuppressWarnings("static-access")
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		ROOM_ID = PostTest.roomId();
-		Thread.currentThread().sleep(500); // for indexing latency...
+		CHANNEL_ID = PostTest.channelId();
 	}
 
 	@AfterClass
@@ -35,7 +33,7 @@ public class GetMessageTest {
 
 	@Test
 	public void testService() throws Exception {
-		IHttpClient client = new MockHttpClient(Server.SERVER, Server.BASE_URI + "/room/" + ROOM_ID + "/message");
+		IHttpClient client = new MockHttpClient(Server.SERVER, Server.BASE_URI + "/channel/" + CHANNEL_ID);
 
 		client.httpRequest().headers().set(Names.CONTENT_TYPE, HeaderValues.APPLICATION_JSON);
 

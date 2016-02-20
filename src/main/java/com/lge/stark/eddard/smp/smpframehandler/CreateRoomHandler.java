@@ -1,6 +1,6 @@
 package com.lge.stark.eddard.smp.smpframehandler;
 
-import com.lge.stark.eddard.controller.RoomController;
+import com.lge.stark.eddard.controller.ChannelController;
 import com.lge.stark.eddard.smp.session.Session;
 import com.lge.stark.eddard.smp.smpframe.CreateRoom;
 import com.lge.stark.eddard.smp.smpframe.ResCreateRoom;
@@ -15,10 +15,10 @@ public class CreateRoomHandler extends SmpframeHandler<CreateRoom> {
 	@Override
 	protected void smpframeReceived(ChannelHandlerContext ctx, CreateRoom smpframe, Session session) throws Exception {
 
-		RoomController.RoomMessage roomMessage = RoomController.SELF.create(smpframe.name(), smpframe.secretKey(),
+		ChannelController.ChannelMessage roomMessage = ChannelController.SELF.create(smpframe.name(), smpframe.secretKey(),
 				smpframe.message(), smpframe.inviterId(), smpframe.inviteeIds().toArray(new String[0]));
 
-		session.send(new ResCreateRoom(session.id(), smpframe.responseSmpframeId(), roomMessage.room.getId(),
-				roomMessage.message.getId(), roomMessage.room.getCreateDate(), roomMessage.message.getUnreadCount()));
+		session.send(new ResCreateRoom(session.id(), smpframe.responseSmpframeId(), roomMessage.channel.getId(),
+				roomMessage.message.getId(), roomMessage.channel.getCreateDate(), roomMessage.message.getUnreadCount()));
 	}
 }

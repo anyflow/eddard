@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.httphandler.room;
+package com.lge.stark.eddard.httphandler.channel;
 
 import java.util.List;
 
@@ -8,14 +8,14 @@ import org.json.JSONObject;
 
 import com.google.inject.internal.Lists;
 import com.lge.stark.eddard.FaultException;
-import com.lge.stark.eddard.controller.RoomController;
+import com.lge.stark.eddard.controller.ChannelController;
 import com.lge.stark.eddard.model.Fault;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import net.anyflow.menton.http.HttpRequestHandler;
 
-@HttpRequestHandler.Handles(paths = { "room" }, httpMethods = { "POST" })
+@HttpRequestHandler.Handles(paths = { "channel" }, httpMethods = { "POST" })
 public class Post extends HttpRequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Post.class);
@@ -38,14 +38,14 @@ public class Post extends HttpRequestHandler {
 				inviteeIds.add(inviteeIdsJson.get(i).toString());
 			}
 
-			RoomController.RoomMessage roomMessage = RoomController.SELF.create(name, secretKey, message, inviterId,
+			ChannelController.ChannelMessage roomMessage = ChannelController.SELF.create(name, secretKey, message, inviterId,
 					inviteeIds.toArray(new String[0]));
 
 			JSONObject ret = new JSONObject();
 
-			ret.put("id", roomMessage.room.getId());
+			ret.put("id", roomMessage.channel.getId());
 			ret.put("messageId", roomMessage.message.getId());
-			ret.put("createDate", roomMessage.room.getCreateDate().getTime());
+			ret.put("createDate", roomMessage.channel.getCreateDate().getTime());
 			ret.put("unreadCount", roomMessage.message.getUnreadCount());
 
 			return ret.toString();
