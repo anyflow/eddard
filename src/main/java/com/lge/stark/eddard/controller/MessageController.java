@@ -28,14 +28,14 @@ public class MessageController {
 		SELF = new MessageController();
 	}
 
-	public Message create(String roomId, String message, String creatorId) throws FaultException {
+	public Message create(String channelId, String message, String creatorId) throws FaultException {
 
 		Message ret = new Message();
 
 		ret.setCreateDate(new Date());
 		ret.setCreatorId(creatorId);
 		ret.setText(message);
-		ret.setChannelId(roomId);
+		ret.setChannelId(channelId);
 
 		Client client = ElasticsearchGateway.getClient();
 

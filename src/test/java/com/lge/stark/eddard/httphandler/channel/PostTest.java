@@ -61,7 +61,7 @@ public class PostTest {
 			inviteeIdsJson.put(x);
 		});
 
-		param.put("name", "sampleRoomName");
+		param.put("name", "sampleChannelName");
 		param.put("inviterId", INVITER_ID);
 		param.put("inviteeIds", inviteeIdsJson);
 		param.put("secretKey", "sampleSecretKey");

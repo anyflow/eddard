@@ -25,7 +25,7 @@ public class PostUser extends HttpRequestHandler {
 
 	@Override
 	public String service() {
-		String roomId = httpRequest().pathParameter("id");
+		String channelId = httpRequest().pathParameter("id");
 
 		String content = httpRequest().content().toString(CharsetUtil.UTF_8);
 
@@ -38,7 +38,7 @@ public class PostUser extends HttpRequestHandler {
 				userIds.add(usersJson.get(i).toString());
 			}
 
-			return ChannelController.SELF.addUsers(roomId, userIds.toArray(new String[0])).toJsonString();
+			return ChannelController.SELF.addUsers(channelId, userIds.toArray(new String[0])).toJsonString();
 		}
 		catch (FaultException fe) {
 			logger.error(fe.getMessage(), fe);

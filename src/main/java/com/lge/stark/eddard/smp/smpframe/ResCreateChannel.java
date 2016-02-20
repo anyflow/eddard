@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ResCreateRoom extends Smpframe {
+public class ResCreateChannel extends Smpframe {
 
 	@JsonProperty("id")
 	String id;
@@ -18,13 +18,13 @@ public class ResCreateRoom extends Smpframe {
 	@JsonProperty("unreadCount")
 	int unreadCount;
 
-	public ResCreateRoom() {
+	public ResCreateChannel() {
 		super();
 	}
 
-	public ResCreateRoom(String sessionId, Integer smpframeId, String id, String messageId, Date createDate,
+	public ResCreateChannel(String sessionId, Integer smpframeId, String id, String messageId, Date createDate,
 			int unreadCount) {
-		super(OpCode.RES_CREATE_ROOM, sessionId, smpframeId);
+		super(OpCode.RES_CREATE_CHANNEL, sessionId, smpframeId);
 
 		this.id = id;
 		this.messageId = messageId;

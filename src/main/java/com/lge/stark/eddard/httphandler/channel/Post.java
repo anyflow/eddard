@@ -38,15 +38,15 @@ public class Post extends HttpRequestHandler {
 				inviteeIds.add(inviteeIdsJson.get(i).toString());
 			}
 
-			ChannelController.ChannelMessage roomMessage = ChannelController.SELF.create(name, secretKey, message, inviterId,
+			ChannelController.ChannelMessage channelMessage = ChannelController.SELF.create(name, secretKey, message, inviterId,
 					inviteeIds.toArray(new String[0]));
 
 			JSONObject ret = new JSONObject();
 
-			ret.put("id", roomMessage.channel.getId());
-			ret.put("messageId", roomMessage.message.getId());
-			ret.put("createDate", roomMessage.channel.getCreateDate().getTime());
-			ret.put("unreadCount", roomMessage.message.getUnreadCount());
+			ret.put("id", channelMessage.channel.getId());
+			ret.put("messageId", channelMessage.message.getId());
+			ret.put("createDate", channelMessage.channel.getCreateDate().getTime());
+			ret.put("unreadCount", channelMessage.message.getUnreadCount());
 
 			return ret.toString();
 		}

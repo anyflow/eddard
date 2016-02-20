@@ -13,9 +13,9 @@ public class DeleteUser extends HttpRequestHandler {
 
 	@Override
 	public String service() {
-		String roomId = httpRequest().pathParameter("id");
+		String channelId = httpRequest().pathParameter("id");
 		String userId = httpRequest().pathParameter("userId");
 
-		return roomId + userId;
+		return channelId + userId;
 	}
 }

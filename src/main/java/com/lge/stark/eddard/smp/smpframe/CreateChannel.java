@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class CreateRoom extends Smpframe {
+public class CreateChannel extends Smpframe {
 
 	@JsonProperty("name")
 	String name;
@@ -21,7 +21,7 @@ public class CreateRoom extends Smpframe {
 	@JsonProperty("message")
 	String message;
 
-	public CreateRoom() {
+	public CreateChannel() {
 		super();
 	}
 
