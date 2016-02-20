@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.httphandler.room;
+package com.lge.stark.eddard.httphandler.channel;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import net.anyflow.menton.http.HttpRequestHandler;
 /**
  * @author Park Hyunjeong
  */
-@HttpRequestHandler.Handles(paths = { "room/{id}/message" }, httpMethods = { "GET" })
+@HttpRequestHandler.Handles(paths = { "channel/{id}/message" }, httpMethods = { "GET" })
 public class GetMessage extends HttpRequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(GetMessage.class);
@@ -26,7 +26,7 @@ public class GetMessage extends HttpRequestHandler {
 
 			if (id == null) {
 				httpResponse().setStatus(HttpResponseStatus.BAD_REQUEST);
-				return Fault.ROOM_001.replaceWith(id).toJsonString();
+				return Fault.CHANNEL_001.replaceWith(id).toJsonString();
 			}
 
 			List<Message> ret = MessageController.SELF.getMessageAll(id);

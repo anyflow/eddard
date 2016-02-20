@@ -16,40 +16,40 @@ import com.lge.stark.eddard.Jsonizable;
 import com.lge.stark.eddard.gateway.ElasticsearchGateway;
 import com.lge.stark.eddard.gateway.PushGateway;
 import com.lge.stark.eddard.mockserver.ProfileServer;
+import com.lge.stark.eddard.model.Channel;
 import com.lge.stark.eddard.model.Device;
 import com.lge.stark.eddard.model.Fault;
 import com.lge.stark.eddard.model.Message;
 import com.lge.stark.eddard.model.MessageStatus;
-import com.lge.stark.eddard.model.Room;
 
-public class RoomController {
+public class ChannelController {
 
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RoomController.class);
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ChannelController.class);
 
-	public final static RoomController SELF;
+	public final static ChannelController SELF;
 
 	static {
-		SELF = new RoomController();
+		SELF = new ChannelController();
 	}
 
-	public class RoomMessage {
-		public Room room;
+	public class ChannelMessage {
+		public Channel channel;
 		public Message message;
 
-		protected RoomMessage(Room room, Message message) {
-			this.room = room;
+		protected ChannelMessage(Channel channel, Message message) {
+			this.channel = channel;
 			this.message = message;
 		}
 	}
 
-	public Room get(String id) throws FaultException {
+	public Channel get(String id) throws FaultException {
 		return get(ElasticsearchGateway.getClient(), id);
 	}
 
-	public Room get(Client client, String id) throws FaultException {
+	public Channel get(Client client, String id) throws FaultException {
 		GetResponse response;
 		try {
-			response = client.prepareGet("stark", "room", id).execute().actionGet();
+			response = client.prepareGet("stark", "channel", id).execute().actionGet();
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -58,34 +58,34 @@ public class RoomController {
 
 		if (response.isExists() == false) { return null; }
 
-		Room ret = Jsonizable.read(response.getSourceAsString(), Room.class);
+		Channel ret = Jsonizable.read(response.getSourceAsString(), Channel.class);
 
 		ret.setId(response.getId());
 
 		return ret;
 	}
 
-	public RoomMessage create(String name, String secretKey, String message, String inviterId, String... inviteeIds)
+	public ChannelMessage create(String name, String secretKey, String message, String inviterId, String... inviteeIds)
 			throws FaultException {
 		return create(ElasticsearchGateway.getClient(), name, secretKey, message, inviterId, inviteeIds);
 	}
 
-	public RoomMessage create(Client client, String name, String secretKey, String message, String inviterId,
+	public ChannelMessage create(Client client, String name, String secretKey, String message, String inviterId,
 			String... inviteeIds) throws FaultException {
 		List<String> users = Lists.newArrayList(inviteeIds);
 		users.add(inviterId);
 
-		Room room = new Room();
+		Channel channel = new Channel();
 
-		room.setId(IdGenerator.newId());
-		room.setName(name);
-		room.setSecretKey(secretKey);
-		room.setCreateDate(new Date());
-		room.setUsers(users);
+		channel.setId(IdGenerator.newId());
+		channel.setName(name);
+		channel.setSecretKey(secretKey);
+		channel.setCreateDate(new Date());
+		channel.setUsers(users);
 
 		IndexResponse response;
 		try {
-			response = client.prepareIndex("stark", "room").setSource(room.toJsonStringWithout("id")).execute()
+			response = client.prepareIndex("stark", "room").setSource(channel.toJsonStringWithout("id")).execute()
 					.actionGet();
 		}
 		catch (Exception e) {
@@ -95,9 +95,9 @@ public class RoomController {
 
 		if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
 
-		room.setId(response.getId());
+		channel.setId(response.getId());
 
-		Message msg = MessageController.SELF.create(room.getId(), message, inviterId);
+		Message msg = MessageController.SELF.create(channel.getId(), message, inviterId);
 
 		for (String inviteeId : inviteeIds) {
 			List<String> deviceIds = ProfileServer.SELF.getDeviceIds(inviteeId);
@@ -133,20 +133,20 @@ public class RoomController {
 			MessageController.SELF.setUnreadCount(msg.getId(), msg.getUnreadCount() + 1);
 		}
 
-		return new RoomMessage(room, msg);
+		return new ChannelMessage(channel, msg);
 	}
 
-	public Room addUsers(String roomId, String... userIds) throws FaultException {
-		return addUsers(ElasticsearchGateway.getClient(), roomId, userIds);
+	public Channel addUsers(String channelId, String... userIds) throws FaultException {
+		return addUsers(ElasticsearchGateway.getClient(), channelId, userIds);
 	}
 
-	public Room addUsers(Client client, String roomId, String... userIds) throws FaultException {
-		Room room = get(client, roomId);
-		room.getUsers().addAll(Lists.newArrayList(userIds));
+	public Channel addUsers(Client client, String channelId, String... userIds) throws FaultException {
+		Channel channel = get(client, channelId);
+		channel.getUsers().addAll(Lists.newArrayList(userIds));
 
 		try {
-			client.update(new UpdateRequest("stark", "room", roomId)
-					.doc(XContentFactory.jsonBuilder().startObject().field("users", room.getUsers()).endObject()))
+			client.update(new UpdateRequest("stark", "channel", channelId)
+					.doc(XContentFactory.jsonBuilder().startObject().field("users", channel.getUsers()).endObject()))
 					.get();
 		}
 		catch (Exception e) {
@@ -154,6 +154,6 @@ public class RoomController {
 			throw new FaultException(Fault.COMMON_000);
 		}
 
-		return room;
+		return channel;
 	}
 }

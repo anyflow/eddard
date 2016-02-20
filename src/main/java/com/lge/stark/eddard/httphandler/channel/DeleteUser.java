@@ -1,11 +1,11 @@
-package com.lge.stark.eddard.httphandler.room;
+package com.lge.stark.eddard.httphandler.channel;
 
 import net.anyflow.menton.http.HttpRequestHandler;
 
 /**
  * @author Park Hyunjeong
  */
-@HttpRequestHandler.Handles(paths = { "room/{roomId}/user/{userId}" }, httpMethods = { "DELETE" })
+@HttpRequestHandler.Handles(paths = { "channel/{id}/user/{userId}" }, httpMethods = { "DELETE" })
 public class DeleteUser extends HttpRequestHandler {
 
 	@SuppressWarnings("unused")
@@ -13,7 +13,7 @@ public class DeleteUser extends HttpRequestHandler {
 
 	@Override
 	public String service() {
-		String roomId = httpRequest().pathParameter("roomId");
+		String roomId = httpRequest().pathParameter("id");
 		String userId = httpRequest().pathParameter("userId");
 
 		return roomId + userId;

@@ -34,7 +34,7 @@ public class MessageController {
 
 		ret.setCreateDate(new Date());
 		ret.setCreatorId(creatorId);
-		ret.setMessage(message);
+		ret.setText(message);
 		ret.setRoomId(roomId);
 
 		Client client = ElasticsearchGateway.getClient();
@@ -74,7 +74,7 @@ public class MessageController {
 		SearchResponse response;
 		try {
 			response = ElasticsearchGateway.getClient().prepareSearch("stark").setTypes("message")
-					.setQuery(QueryBuilders.matchQuery("roomId", id)).execute().actionGet();
+					.setQuery(QueryBuilders.matchQuery("channelId", id)).execute().actionGet();
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(), e);

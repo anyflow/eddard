@@ -1,4 +1,4 @@
-package com.lge.stark.eddard.httphandler.room;
+package com.lge.stark.eddard.httphandler.channel;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import com.google.inject.internal.Lists;
 import com.lge.stark.eddard.FaultException;
-import com.lge.stark.eddard.controller.RoomController;
+import com.lge.stark.eddard.controller.ChannelController;
 import com.lge.stark.eddard.model.Fault;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -18,7 +18,7 @@ import net.anyflow.menton.http.HttpRequestHandler;
 /**
  * @author Park Hyunjeong
  */
-@HttpRequestHandler.Handles(paths = { "room/{id}/user" }, httpMethods = { "POST" })
+@HttpRequestHandler.Handles(paths = { "channel/{id}/user" }, httpMethods = { "POST" })
 public class PostUser extends HttpRequestHandler {
 
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PostUser.class);
@@ -38,7 +38,7 @@ public class PostUser extends HttpRequestHandler {
 				userIds.add(usersJson.get(i).toString());
 			}
 
-			return RoomController.SELF.addUsers(roomId, userIds.toArray(new String[0])).toJsonString();
+			return ChannelController.SELF.addUsers(roomId, userIds.toArray(new String[0])).toJsonString();
 		}
 		catch (FaultException fe) {
 			logger.error(fe.getMessage(), fe);
