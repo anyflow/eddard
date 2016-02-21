@@ -15,8 +15,13 @@ import com.google.common.collect.Lists;
 import com.lge.stark.FaultException;
 import com.lge.stark.Jsonizable;
 import com.lge.stark.gateway.ElasticsearchGateway;
+import com.lge.stark.gateway.PushGateway;
+import com.lge.stark.mockserver.ProfileServer;
+import com.lge.stark.model.Channel;
+import com.lge.stark.model.Device;
 import com.lge.stark.model.Fault;
 import com.lge.stark.model.Message;
+import com.lge.stark.model.MessageStatus;
 
 public class MessageController {
 
@@ -28,14 +33,19 @@ public class MessageController {
 		SELF = new MessageController();
 	}
 
-	public Message create(String channelId, String message, String creatorId) throws FaultException {
+	public Message create(String channelId, String text, String creatorId) throws FaultException {
+
+		Channel channel = ChannelController.SELF.get(channelId);
+
+		if (channel == null) { throw new FaultException(Fault.CHANNEL_001); }
 
 		Message ret = new Message();
 
 		ret.setCreateDate(new Date());
 		ret.setCreatorId(creatorId);
-		ret.setText(message);
+		ret.setText(text);
 		ret.setChannelId(channelId);
+		ret.setUnreadCount(channel.getUserIds().size() - 1);
 
 		Client client = ElasticsearchGateway.getClient();
 
@@ -52,6 +62,42 @@ public class MessageController {
 		if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
 
 		ret.setId(response.getId());
+
+		for (String inviteeId : channel.getUserIds()) {
+			if (inviteeId.equals(creatorId)) {
+				continue;
+			}
+
+			List<String> deviceIds = ProfileServer.SELF.getDeviceIds(inviteeId);
+
+			List<Device> devices = DeviceController.SELF.get(deviceIds.toArray(new String[0]));
+
+			if (devices == null || devices.size() <= 0) {
+				continue;
+			}
+
+			Device activeDevice = devices.stream().filter(item -> {
+				return item.isActive();
+			}).findFirst().orElse(null);
+
+			if (activeDevice == null) {
+				continue;
+			}
+
+			PushGateway.SELF.send(activeDevice.getType(), activeDevice.getReceiverId(), ret);
+
+			MessageStatus ms = new MessageStatus();
+
+			ms.setMessageId(ret.getId());
+			ms.setDeviceId(activeDevice.getId());
+			ms.setStatus(MessageStatus.Status.PEND);
+			ms.setCreateDate(new Date());
+
+			response = client.prepareIndex("stark", "messageStatus", ms.getId()).setSource(ms.toJsonStringWithout("id"))
+					.execute().actionGet();
+
+			if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
+		}
 
 		return ret;
 	}

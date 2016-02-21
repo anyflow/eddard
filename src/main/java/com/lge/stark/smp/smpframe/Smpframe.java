@@ -11,8 +11,13 @@ import com.jayway.jsonpath.JsonPath;
 
 public abstract class Smpframe extends com.lge.stark.Jsonizable {
 
+	@JsonProperty("opcode")
 	private OpCode opcode;
+
+	@JsonProperty("sessionId")
 	private String sessionId;
+	
+	@JsonProperty("pushframeId")
 	private Integer id;
 
 	public Smpframe() {
@@ -24,7 +29,6 @@ public abstract class Smpframe extends com.lge.stark.Jsonizable {
 		this.id = pushframeId;
 	}
 
-	@JsonProperty("opcode")
 	public OpCode opcode() {
 		return opcode;
 	}
@@ -33,7 +37,6 @@ public abstract class Smpframe extends com.lge.stark.Jsonizable {
 		this.opcode = opcode;
 	}
 
-	@JsonProperty("sessionId")
 	public String sessionId() {
 		return sessionId;
 	}
@@ -42,7 +45,6 @@ public abstract class Smpframe extends com.lge.stark.Jsonizable {
 		this.sessionId = sessionId;
 	}
 
-	@JsonProperty("pushframeId")
 	public Integer id() {
 		return id;
 	}

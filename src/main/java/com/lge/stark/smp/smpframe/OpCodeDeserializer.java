@@ -9,6 +9,10 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 
 public final class OpCodeDeserializer extends JsonDeserializer<OpCode> {
 
+	public OpCodeDeserializer() {
+		super();
+	}
+
 	@Override
 	public OpCode deserialize(final JsonParser parser, final DeserializationContext context)
 			throws IOException, JsonProcessingException {

@@ -65,7 +65,6 @@ public class PostTest {
 		param.put("inviterId", INVITER_ID);
 		param.put("inviteeIds", inviteeIdsJson);
 		param.put("secretKey", "sampleSecretKey");
-		param.put("message", "test message");
 
 		IHttpClient client = new MockHttpClient(Server.SERVER, Server.BASE_URI + "/channel");
 

@@ -47,6 +47,8 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 		ctx.pipeline().addLast(new DeleteDeviceHandler());
 		ctx.pipeline().addLast(new UpdateDeviceStatusHandler());
 		ctx.pipeline().addLast(new GetFriendsHandler());
+		ctx.pipeline().addLast(new CreateChannelHandler());
+		ctx.pipeline().addLast(new CreateMessageHandler());
 	}
 
 	@Override

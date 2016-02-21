@@ -9,9 +9,14 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 public final class OpCodeSerializer extends JsonSerializer<OpCode> {
 
-    @Override
-    public void serialize(OpCode value, JsonGenerator generator, SerializerProvider provider) throws IOException, JsonProcessingException {
+	public OpCodeSerializer() {
+		super();
+	}
 
-        generator.writeNumber(value.id());
-    }
+	@Override
+	public void serialize(OpCode value, JsonGenerator generator, SerializerProvider provider)
+			throws IOException, JsonProcessingException {
+
+		generator.writeNumber(value.id());
+	}
 }

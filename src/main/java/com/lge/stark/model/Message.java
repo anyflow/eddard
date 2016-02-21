@@ -3,8 +3,12 @@ package com.lge.stark.model;
 import java.util.Date;
 
 import com.lge.stark.Jsonizable;
+import com.lge.stark.smp.smpframe.ModelResponse;
+import com.lge.stark.smp.smpframe.OpCode;
 
+@ModelResponse(name = "message", opcode = OpCode.RES_CREATE_MESSAGE)
 public class Message extends Jsonizable {
+
 	private String id;
 	private String channelId;
 	private String creatorId;

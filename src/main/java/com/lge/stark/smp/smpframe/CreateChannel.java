@@ -18,16 +18,13 @@ public class CreateChannel extends Smpframe {
 	@JsonProperty("secretKey")
 	String secretKey;
 
-	@JsonProperty("message")
-	String message;
-
 	public CreateChannel() {
 		super();
 	}
 
 	@Override
 	public boolean isResponseRequired() {
-		return false;
+		return true;
 	}
 
 	public String name() {
@@ -44,9 +41,5 @@ public class CreateChannel extends Smpframe {
 
 	public String secretKey() {
 		return secretKey;
-	}
-
-	public String message() {
-		return message;
 	}
 }

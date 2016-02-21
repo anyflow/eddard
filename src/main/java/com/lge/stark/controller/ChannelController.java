@@ -14,13 +14,8 @@ import com.lge.stark.FaultException;
 import com.lge.stark.IdGenerator;
 import com.lge.stark.Jsonizable;
 import com.lge.stark.gateway.ElasticsearchGateway;
-import com.lge.stark.gateway.PushGateway;
-import com.lge.stark.mockserver.ProfileServer;
 import com.lge.stark.model.Channel;
-import com.lge.stark.model.Device;
 import com.lge.stark.model.Fault;
-import com.lge.stark.model.Message;
-import com.lge.stark.model.MessageStatus;
 
 public class ChannelController {
 
@@ -30,16 +25,6 @@ public class ChannelController {
 
 	static {
 		SELF = new ChannelController();
-	}
-
-	public class ChannelMessage {
-		public Channel channel;
-		public Message message;
-
-		protected ChannelMessage(Channel channel, Message message) {
-			this.channel = channel;
-			this.message = message;
-		}
 	}
 
 	public Channel get(String id) throws FaultException {
@@ -65,13 +50,12 @@ public class ChannelController {
 		return ret;
 	}
 
-	public ChannelMessage create(String name, String secretKey, String message, String inviterId, String... inviteeIds)
-			throws FaultException {
-		return create(ElasticsearchGateway.getClient(), name, secretKey, message, inviterId, inviteeIds);
+	public Channel create(String name, String secretKey, String inviterId, String... inviteeIds) throws FaultException {
+		return create(ElasticsearchGateway.getClient(), name, secretKey, inviterId, inviteeIds);
 	}
 
-	public ChannelMessage create(Client client, String name, String secretKey, String message, String inviterId,
-			String... inviteeIds) throws FaultException {
+	public Channel create(Client client, String name, String secretKey, String inviterId, String... inviteeIds)
+			throws FaultException {
 		List<String> users = Lists.newArrayList(inviteeIds);
 		users.add(inviterId);
 
@@ -81,7 +65,7 @@ public class ChannelController {
 		channel.setName(name);
 		channel.setSecretKey(secretKey);
 		channel.setCreateDate(new Date());
-		channel.setUsers(users);
+		channel.setUserIds(users);
 
 		IndexResponse response;
 		try {
@@ -97,43 +81,7 @@ public class ChannelController {
 
 		channel.setId(response.getId());
 
-		Message msg = MessageController.SELF.create(channel.getId(), message, inviterId);
-
-		for (String inviteeId : inviteeIds) {
-			List<String> deviceIds = ProfileServer.SELF.getDeviceIds(inviteeId);
-
-			List<Device> devices = DeviceController.SELF.get(deviceIds.toArray(new String[0]));
-
-			if (devices == null || devices.size() <= 0) {
-				continue;
-			}
-
-			Device activeDevice = devices.stream().filter(item -> {
-				return item.isActive();
-			}).findFirst().orElse(null);
-
-			if (activeDevice == null) {
-				continue;
-			}
-
-			PushGateway.SELF.send(activeDevice.getType(), activeDevice.getReceiverId(), message);
-
-			MessageStatus ms = new MessageStatus();
-
-			ms.setMessageId(msg.getId());
-			ms.setDeviceId(activeDevice.getId());
-			ms.setStatus(MessageStatus.Status.PEND);
-			ms.setCreateDate(new Date());
-
-			response = client.prepareIndex("stark", "messageStatus", ms.getId()).setSource(ms.toJsonStringWithout("id"))
-					.execute().actionGet();
-
-			if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
-
-			MessageController.SELF.setUnreadCount(msg.getId(), msg.getUnreadCount() + 1);
-		}
-
-		return new ChannelMessage(channel, msg);
+		return channel;
 	}
 
 	public Channel addUsers(String channelId, String... userIds) throws FaultException {
@@ -142,11 +90,11 @@ public class ChannelController {
 
 	public Channel addUsers(Client client, String channelId, String... userIds) throws FaultException {
 		Channel channel = get(client, channelId);
-		channel.getUsers().addAll(Lists.newArrayList(userIds));
+		channel.getUserIds().addAll(Lists.newArrayList(userIds));
 
 		try {
 			client.update(new UpdateRequest("stark", "channel", channelId)
-					.doc(XContentFactory.jsonBuilder().startObject().field("users", channel.getUsers()).endObject()))
+					.doc(XContentFactory.jsonBuilder().startObject().field("users", channel.getUserIds()).endObject()))
 					.get();
 		}
 		catch (Exception e) {

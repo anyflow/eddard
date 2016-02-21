@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.google.inject.internal.Lists;
 import com.lge.stark.FaultException;
 import com.lge.stark.controller.ChannelController;
+import com.lge.stark.model.Channel;
 import com.lge.stark.model.Fault;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -31,22 +32,19 @@ public class Post extends HttpRequestHandler {
 			String inviterId = json.getString("inviterId");
 			JSONArray inviteeIdsJson = json.getJSONArray("inviteeIds");
 			String secretKey = json.getString("secretKey");
-			String message = json.getString("message");
 
 			List<String> inviteeIds = Lists.newArrayList();
 			for (int i = 0; i < inviteeIdsJson.length(); ++i) {
 				inviteeIds.add(inviteeIdsJson.get(i).toString());
 			}
 
-			ChannelController.ChannelMessage channelMessage = ChannelController.SELF.create(name, secretKey, message, inviterId,
+			Channel channel = ChannelController.SELF.create(name, secretKey, inviterId,
 					inviteeIds.toArray(new String[0]));
 
 			JSONObject ret = new JSONObject();
 
-			ret.put("id", channelMessage.channel.getId());
-			ret.put("messageId", channelMessage.message.getId());
-			ret.put("createDate", channelMessage.channel.getCreateDate().getTime());
-			ret.put("unreadCount", channelMessage.message.getUnreadCount());
+			ret.put("id", channel.getId());
+			ret.put("createDate", channel.getCreateDate().getTime());
 
 			return ret.toString();
 		}

@@ -40,9 +40,11 @@ public enum OpCode {
 	UPDATE_DEVICE_STATUS(302, "Update status of a device"), 
 	GET_FRIENDS(303, "Get friends"),
 	CREATE_CHANNEL(304, "Create a channel"),
+	CREATE_MESSAGE(305, "Create a message"),
 	
 	RES_GET_FRIENDS(353, "Return of GET_FRIEND"), 
-	RES_CREATE_CHANNEL(354, "Return of CREATE_CHANNEL");
+	RES_CREATE_CHANNEL(354, "Return of CREATE_CHANNEL"),
+	RES_CREATE_MESSAGE(355, "Return of CREATE_MESSAGE");
 
 	private static final Map<OpCode, Class<? extends Smpframe>> FRAMECLASS_MAPPER;
 
@@ -68,9 +70,7 @@ public enum OpCode {
 		FRAMECLASS_MAPPER.put(UPDATE_DEVICE_STATUS, UpdateDeviceStatus.class);
 		FRAMECLASS_MAPPER.put(GET_FRIENDS, GetFriends.class);
 		FRAMECLASS_MAPPER.put(CREATE_CHANNEL, CreateChannel.class);
-
-		FRAMECLASS_MAPPER.put(RES_GET_FRIENDS, ResGetFriends.class);
-		FRAMECLASS_MAPPER.put(RES_CREATE_CHANNEL, ResCreateChannel.class);
+		FRAMECLASS_MAPPER.put(CREATE_MESSAGE, CreateMessage.class);
 	}
 
 	public static OpCode from(int id) {

@@ -4,13 +4,16 @@ import java.util.Date;
 import java.util.List;
 
 import com.lge.stark.Jsonizable;
+import com.lge.stark.smp.smpframe.ModelResponse;
+import com.lge.stark.smp.smpframe.OpCode;
 
+@ModelResponse(name = "channel", opcode = OpCode.RES_CREATE_CHANNEL)
 public class Channel extends Jsonizable {
 
 	private String id;
 	private String name;
 	private String secretKey;
-	private List<String> users;
+	private List<String> userIds;
 	private Date createDate;
 
 	public String getId() {
@@ -37,12 +40,12 @@ public class Channel extends Jsonizable {
 		this.secretKey = secretKey;
 	}
 
-	public List<String> getUsers() {
-		return users;
+	public List<String> getUserIds() {
+		return userIds;
 	}
 
-	public void setUsers(List<String> users) {
-		this.users = users;
+	public void setUserIds(List<String> userIds) {
+		this.userIds = userIds;
 	}
 
 	public Date getCreateDate() {
