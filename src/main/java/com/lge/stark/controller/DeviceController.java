@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.lge.stark.FaultException;
 import com.lge.stark.Jsonizable;
 import com.lge.stark.gateway.ElasticsearchGateway;
+import com.lge.stark.mockserver.ProfileServer;
 import com.lge.stark.model.Device;
 import com.lge.stark.model.Fault;
 import com.lge.stark.model.PushType;
@@ -25,6 +26,18 @@ public class DeviceController {
 
 	static {
 		SELF = new DeviceController();
+	}
+
+	public Device getActive(String userId) throws FaultException {
+		List<String> deviceIds = ProfileServer.SELF.getDeviceIds(userId);
+
+		List<Device> devices = DeviceController.SELF.get(deviceIds.toArray(new String[0]));
+
+		if (devices == null || devices.size() <= 0) { return null; }
+
+		return devices.stream().filter(item -> {
+			return item.isActive();
+		}).findFirst().orElse(null);
 	}
 
 	public List<Device> get(String... deviceIds) throws FaultException {

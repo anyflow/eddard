@@ -15,13 +15,12 @@ import com.google.common.collect.Lists;
 import com.lge.stark.FaultException;
 import com.lge.stark.Jsonizable;
 import com.lge.stark.gateway.ElasticsearchGateway;
-import com.lge.stark.gateway.PushGateway;
-import com.lge.stark.mockserver.ProfileServer;
 import com.lge.stark.model.Channel;
 import com.lge.stark.model.Device;
 import com.lge.stark.model.Fault;
 import com.lge.stark.model.Message;
 import com.lge.stark.model.MessageStatus;
+import com.lge.stark.smp.smpframe.GenericSmpframe;
 
 public class MessageController {
 
@@ -63,33 +62,13 @@ public class MessageController {
 
 		ret.setId(response.getId());
 
-		for (String inviteeId : channel.getUserIds()) {
-			if (inviteeId.equals(creatorId)) {
-				continue;
-			}
+		List<Device> devices = ChannelController.SELF.broadcast(channel, new GenericSmpframe<Message>(null, -1, ret));
 
-			List<String> deviceIds = ProfileServer.SELF.getDeviceIds(inviteeId);
-
-			List<Device> devices = DeviceController.SELF.get(deviceIds.toArray(new String[0]));
-
-			if (devices == null || devices.size() <= 0) {
-				continue;
-			}
-
-			Device activeDevice = devices.stream().filter(item -> {
-				return item.isActive();
-			}).findFirst().orElse(null);
-
-			if (activeDevice == null) {
-				continue;
-			}
-
-			PushGateway.SELF.send(activeDevice.getType(), activeDevice.getReceiverId(), ret);
-
+		for (Device device : devices) {
 			MessageStatus ms = new MessageStatus();
 
 			ms.setMessageId(ret.getId());
-			ms.setDeviceId(activeDevice.getId());
+			ms.setDeviceId(device.getId());
 			ms.setStatus(MessageStatus.Status.PEND);
 			ms.setCreateDate(new Date());
 

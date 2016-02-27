@@ -14,8 +14,14 @@ import com.lge.stark.FaultException;
 import com.lge.stark.IdGenerator;
 import com.lge.stark.Jsonizable;
 import com.lge.stark.gateway.ElasticsearchGateway;
+import com.lge.stark.gateway.PushGateway;
 import com.lge.stark.model.Channel;
+import com.lge.stark.model.Device;
 import com.lge.stark.model.Fault;
+import com.lge.stark.smp.session.Session;
+import com.lge.stark.smp.session.SessionNexus;
+import com.lge.stark.smp.smpframe.ChannelLeft;
+import com.lge.stark.smp.smpframe.Smpframe;
 
 public class ChannelController {
 
@@ -84,17 +90,17 @@ public class ChannelController {
 		return channel;
 	}
 
-	public Channel addUsers(String channelId, String... userIds) throws FaultException {
-		return addUsers(ElasticsearchGateway.getClient(), channelId, userIds);
+	public Channel addUsers(String id, String... userIds) throws FaultException {
+		return addUsers(ElasticsearchGateway.getClient(), id, userIds);
 	}
 
-	public Channel addUsers(Client client, String channelId, String... userIds) throws FaultException {
-		Channel channel = get(client, channelId);
+	public Channel addUsers(Client client, String id, String... userIds) throws FaultException {
+		Channel channel = get(client, id);
 		channel.getUserIds().addAll(Lists.newArrayList(userIds));
 
 		try {
-			client.update(new UpdateRequest("stark", "channel", channelId)
-					.doc(XContentFactory.jsonBuilder().startObject().field("users", channel.getUserIds()).endObject()))
+			client.update(new UpdateRequest("stark", "channel", id).doc(
+					XContentFactory.jsonBuilder().startObject().field("userIds", channel.getUserIds()).endObject()))
 					.get();
 		}
 		catch (Exception e) {
@@ -103,5 +109,68 @@ public class ChannelController {
 		}
 
 		return channel;
+	}
+
+	public List<Device> broadcast(String id, Smpframe smpframe) throws FaultException {
+		Channel channel = get(id);
+
+		if (channel == null) {
+			logger.error("Channel({}) is not found!", id);
+			return null;
+		}
+
+		return broadcast(channel, smpframe);
+	}
+
+	public List<Device> broadcast(Channel channel, Smpframe smpframe) throws FaultException {
+		List<Device> ret = Lists.newArrayList();
+
+		for (String uid : channel.getUserIds()) {
+			Device device = DeviceController.SELF.getActive(uid);
+			if (device == null) {
+				continue;
+			}
+
+			ret.add(device);
+
+			Session session = SessionNexus.SELF.getByDeviceId(device.getId());
+			if (session == null) {
+				PushGateway.SELF.send(device.getType(), device.getReceiverId(), smpframe);
+				continue;
+			}
+
+			smpframe.sessionId(session.id());
+			smpframe.id(session.nextPushframeId());
+
+			session.send(smpframe);
+		}
+
+		return ret;
+	}
+
+	public void leave(String id, String userId) throws FaultException {
+		Client client = ElasticsearchGateway.getClient();
+
+		Channel channel = get(id);
+
+		if (channel == null) {
+			logger.error("Channel({}) is not found!", id);
+			return;
+		}
+
+		broadcast(channel, new ChannelLeft(null, -1, channel.getId(), userId));
+
+		try {
+			if (channel.getUserIds().size() > 0) {
+				client.update(new UpdateRequest("stark", "channel", id).doc(channel.toJsonString())).get();
+			}
+			else {
+				client.prepareDelete("stark", "channel", id).get();
+			}
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
+		}
 	}
 }

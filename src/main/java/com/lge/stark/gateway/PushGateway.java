@@ -8,8 +8,8 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import com.lge.stark.FaultException;
-import com.lge.stark.model.Message;
 import com.lge.stark.model.PushType;
+import com.lge.stark.smp.smpframe.Smpframe;
 
 public class PushGateway {
 
@@ -42,18 +42,18 @@ public class PushGateway {
 		apns.shutdown();
 	}
 
-	public void send(PushType pushType, String receiverId, Message message) throws FaultException {
+	public void send(PushType pushType, String receiverId, Smpframe smpframe) throws FaultException {
 		switch (pushType) {
 		case LGPS:
-			lgps.send(receiverId, message.toJsonString());
+			lgps.send(receiverId, smpframe.toJsonString());
 			break;
 
 		case APNS:
-			apns.send(receiverId, message.toJsonString());
+			apns.send(receiverId, smpframe.toJsonString());
 			break;
 
 		case GCM:
-			gcm.send(receiverId, message.toJsonString());
+			gcm.send(receiverId, smpframe.toJsonString());
 			break;
 		}
 	}

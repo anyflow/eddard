@@ -38,14 +38,16 @@ public enum OpCode {
 	REGISTER_DEVICE(300, "Register a device"), 
 	DELETE_DEVICE(301, "Delete a device"), 
 	UPDATE_DEVICE_STATUS(302, "Update status of a device"), 
-	GET_FRIENDS(303, "Get friends"),
+	RETRIEVE_FRIENDS(303, "Get friends"),
 	CREATE_CHANNEL(304, "Create a channel"),
 	CREATE_MESSAGE(305, "Create a message"),
+	LEAVE_CHANNEL(306, "Leave a channel"),
 	
-	RES_GET_FRIENDS(353, "Return of GET_FRIEND"), 
-	RES_CREATE_CHANNEL(354, "Return of CREATE_CHANNEL"),
-	RES_CREATE_MESSAGE(355, "Return of CREATE_MESSAGE");
-
+	FRIENDS_RETRIEVED(353, "Return of GET_FRIEND"), 
+	CHANNEL_CREATED(354, "Return of CREATE_CHANNEL"),
+	MESSAGE_CREATED(355, "Return of CREATE_MESSAGE"),
+	CHANNEL_LEFT(356, "A user left the channel");
+	
 	private static final Map<OpCode, Class<? extends Smpframe>> FRAMECLASS_MAPPER;
 
 	static {
@@ -56,21 +58,16 @@ public enum OpCode {
 		FRAMECLASS_MAPPER.put(REDIRECT, Redirect.class);
 		FRAMECLASS_MAPPER.put(CLOSE_SESSION, CloseSession.class);
 		FRAMECLASS_MAPPER.put(IS_ALIVE, IsAlive.class);
-		FRAMECLASS_MAPPER.put(ERROR_INTERNAL_UNKNOWN, ErrorInternalUnknown.class);
-		FRAMECLASS_MAPPER.put(ERROR_INVALID_SMPFRAME_FORMAT, ErrorInvalidSmpframeFormat.class);
-		FRAMECLASS_MAPPER.put(ERROR_NO_SESSION_ALLOCATED, ErrorNoSessionAllocated.class);
-		FRAMECLASS_MAPPER.put(ERROR_SESSION_EXPIRED, ErrorSessionExpired.class);
-		FRAMECLASS_MAPPER.put(ERROR_INVALID_DEVICEID, ErrorInvalidDeviceId.class);
-		FRAMECLASS_MAPPER.put(ERROR_INVALID_NETWORKTYPE, ErrorInvalidNetworkType.class);
-
+		
 		FRAMECLASS_MAPPER.put(ERROR_STARK_SERVICE, ErrorStarkService.class);
 
 		FRAMECLASS_MAPPER.put(REGISTER_DEVICE, RegisterDevice.class);
 		FRAMECLASS_MAPPER.put(DELETE_DEVICE, DeleteDevice.class);
 		FRAMECLASS_MAPPER.put(UPDATE_DEVICE_STATUS, UpdateDeviceStatus.class);
-		FRAMECLASS_MAPPER.put(GET_FRIENDS, GetFriends.class);
+		FRAMECLASS_MAPPER.put(RETRIEVE_FRIENDS, RetrieveFriends.class);
 		FRAMECLASS_MAPPER.put(CREATE_CHANNEL, CreateChannel.class);
 		FRAMECLASS_MAPPER.put(CREATE_MESSAGE, CreateMessage.class);
+		FRAMECLASS_MAPPER.put(LEAVE_CHANNEL, LeaveChannel.class);
 	}
 
 	public static OpCode from(int id) {

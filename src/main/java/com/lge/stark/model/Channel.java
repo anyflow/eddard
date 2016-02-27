@@ -7,7 +7,7 @@ import com.lge.stark.Jsonizable;
 import com.lge.stark.smp.smpframe.ModelResponse;
 import com.lge.stark.smp.smpframe.OpCode;
 
-@ModelResponse(name = "channel", opcode = OpCode.RES_CREATE_CHANNEL)
+@ModelResponse(name = "channel", opcode = OpCode.CHANNEL_CREATED)
 public class Channel extends Jsonizable {
 
 	private String id;

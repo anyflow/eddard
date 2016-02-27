@@ -16,7 +16,7 @@ public abstract class Smpframe extends com.lge.stark.Jsonizable {
 
 	@JsonProperty("sessionId")
 	private String sessionId;
-	
+
 	@JsonProperty("pushframeId")
 	private Integer id;
 
@@ -80,5 +80,19 @@ public abstract class Smpframe extends com.lge.stark.Jsonizable {
 		Integer opcode = Ints.tryParse(JsonPath.read(json, "opcode").toString());
 
 		return mapper.reader().forType(OpCode.getOpcodeClass(OpCode.from(opcode))).readValue(json);
+	}
+
+	public static Smpframe createDefault(OpCode opcode, String sessionId, int smpframeId) {
+		return createDefault(opcode, sessionId, smpframeId);
+	}
+
+	public static Smpframe createDefault(OpCode opcode, String sessionId, int smpframeId,
+			final boolean isResponseRequired) {
+		return new Smpframe(opcode, sessionId, smpframeId) {
+			@Override
+			public boolean isResponseRequired() {
+				return isResponseRequired;
+			}
+		};
 	}
 }

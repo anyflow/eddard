@@ -5,7 +5,7 @@ import java.util.List;
 import com.lge.stark.Settings;
 import com.lge.stark.smp.session.Session;
 import com.lge.stark.smp.session.SessionNexus;
-import com.lge.stark.smp.smpframe.ErrorInvalidSmpframeFormat;
+import com.lge.stark.smp.smpframe.OpCode;
 import com.lge.stark.smp.smpframe.Smpframe;
 
 import io.netty.channel.ChannelFutureListener;
@@ -46,9 +46,10 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 		ctx.pipeline().addLast(new RegisterDeviceHandler());
 		ctx.pipeline().addLast(new DeleteDeviceHandler());
 		ctx.pipeline().addLast(new UpdateDeviceStatusHandler());
-		ctx.pipeline().addLast(new GetFriendsHandler());
+		ctx.pipeline().addLast(new RetrieveFriendsHandler());
 		ctx.pipeline().addLast(new CreateChannelHandler());
 		ctx.pipeline().addLast(new CreateMessageHandler());
+		ctx.pipeline().addLast(new LeaveChannelHandler());
 	}
 
 	@Override
@@ -57,8 +58,16 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, WebSocketFrame msg, List<Object> out) throws Exception {
+
+		Smpframe errorInvalidSmpframeFormat = new Smpframe(OpCode.ERROR_INVALID_SMPFRAME_FORMAT, null, -1) {
+			@Override
+			public boolean isResponseRequired() {
+				return false;
+			}
+		};
+
 		if (msg instanceof TextWebSocketFrame == false) {
-			ctx.channel().writeAndFlush(new TextWebSocketFrame(new ErrorInvalidSmpframeFormat().toJsonString()))
+			ctx.channel().writeAndFlush(new TextWebSocketFrame(errorInvalidSmpframeFormat.toJsonString()))
 					.addListener(ChannelFutureListener.CLOSE);
 			return;
 		}
@@ -71,7 +80,7 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			ctx.channel().writeAndFlush(new TextWebSocketFrame(new ErrorInvalidSmpframeFormat().toJsonString()))
+			ctx.channel().writeAndFlush(new TextWebSocketFrame(errorInvalidSmpframeFormat.toJsonString()))
 					.addListener(ChannelFutureListener.CLOSE);
 		}
 	}

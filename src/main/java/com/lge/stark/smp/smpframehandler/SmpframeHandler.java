@@ -2,8 +2,6 @@ package com.lge.stark.smp.smpframehandler;
 
 import com.lge.stark.smp.session.Session;
 import com.lge.stark.smp.session.SessionNexus;
-import com.lge.stark.smp.smpframe.ErrorInternalUnknown;
-import com.lge.stark.smp.smpframe.ErrorNoSessionAllocated;
 import com.lge.stark.smp.smpframe.OpCode;
 import com.lge.stark.smp.smpframe.Smpframe;
 
@@ -26,8 +24,10 @@ public abstract class SmpframeHandler<T extends Smpframe> extends SimpleChannelI
 			session = SessionNexus.SELF.get(msg.sessionId());
 
 			if (msg.opcode().id() != OpCode.INITIALIZE.id() && session == null) {
-				ctx.writeAndFlush(
-						new TextWebSocketFrame(new ErrorNoSessionAllocated(msg.responseSmpframeId()).toJsonString()))
+
+				ctx.writeAndFlush(new TextWebSocketFrame(
+						Smpframe.createDefault(OpCode.ERROR_NO_SESSION_ALLOCATED, null, msg.responseSmpframeId())
+								.toJsonString()))
 						.addListener(ChannelFutureListener.CLOSE);
 				return;
 			}
@@ -39,11 +39,11 @@ public abstract class SmpframeHandler<T extends Smpframe> extends SimpleChannelI
 			logger.error(e.getMessage(), e);
 
 			if (session != null) {
-				session.send(new ErrorInternalUnknown(session.id(), msg.responseSmpframeId()));
+				session.send(Smpframe.createDefault(OpCode.ERROR_INTERNAL_UNKNOWN, null, msg.responseSmpframeId()));
 			}
 			else {
-				ctx.channel().writeAndFlush(new TextWebSocketFrame(
-						new ErrorInternalUnknown(null, msg.responseSmpframeId()).toJsonString()));
+				ctx.channel().writeAndFlush(new TextWebSocketFrame(Smpframe
+						.createDefault(OpCode.ERROR_INTERNAL_UNKNOWN, null, msg.responseSmpframeId()).toJsonString()));
 			}
 		}
 	}
