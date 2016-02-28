@@ -2,6 +2,7 @@ package com.lge.stark.gateway;
 
 import com.lge.stark.FaultException;
 import com.lge.stark.mockserver.DeviceServer;
+import com.lge.stark.model.Fault;
 
 public class DeviceGateway {
 
@@ -14,7 +15,9 @@ public class DeviceGateway {
 		SELF = new DeviceGateway();
 	}
 
-	public boolean isValid(String deviceId) throws FaultException {
-		return DeviceServer.SELF.isValid(deviceId);
+	public void validate(String deviceId) throws FaultException {
+		if (DeviceServer.SELF.isValid(deviceId)) { return; }
+
+		throw new FaultException(Fault.DEVICE_002.replaceWith(deviceId));
 	}
 }

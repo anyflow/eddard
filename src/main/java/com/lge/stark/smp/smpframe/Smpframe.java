@@ -83,7 +83,7 @@ public abstract class Smpframe extends com.lge.stark.Jsonizable {
 	}
 
 	public static Smpframe createDefault(OpCode opcode, String sessionId, int smpframeId) {
-		return createDefault(opcode, sessionId, smpframeId);
+		return createDefault(opcode, sessionId, smpframeId, false);
 	}
 
 	public static Smpframe createDefault(OpCode opcode, String sessionId, int smpframeId,

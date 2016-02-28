@@ -31,6 +31,6 @@ public class CreateMessage extends Smpframe {
 
 	@Override
 	public boolean isResponseRequired() {
-		return true;
+		return false;
 	}
 }

@@ -16,7 +16,7 @@ public class ErrorStarkService extends Smpframe {
 	}
 
 	public ErrorStarkService(String sessionId, Integer smpframeId, Fault fault) {
-		super(OpCode.ERROR_INTERNAL_UNKNOWN, sessionId, smpframeId);
+		super(OpCode.ERROR_STARK_SERVICE, sessionId, smpframeId);
 
 		this.code = fault.code();
 		this.description = fault.description();

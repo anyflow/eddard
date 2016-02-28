@@ -15,12 +15,14 @@ import com.lge.stark.IdGenerator;
 import com.lge.stark.Jsonizable;
 import com.lge.stark.gateway.ElasticsearchGateway;
 import com.lge.stark.gateway.PushGateway;
+import com.lge.stark.gateway.UserGateway;
 import com.lge.stark.model.Channel;
 import com.lge.stark.model.Device;
 import com.lge.stark.model.Fault;
 import com.lge.stark.smp.session.Session;
 import com.lge.stark.smp.session.SessionNexus;
 import com.lge.stark.smp.smpframe.ChannelLeft;
+import com.lge.stark.smp.smpframe.GenericSmpframe;
 import com.lge.stark.smp.smpframe.Smpframe;
 
 public class ChannelController {
@@ -65,6 +67,10 @@ public class ChannelController {
 		List<String> users = Lists.newArrayList(inviteeIds);
 		users.add(inviterId);
 
+		// user validation
+		UserGateway.SELF.get(inviteeIds);
+		UserGateway.SELF.get(inviterId);
+
 		Channel channel = new Channel();
 
 		channel.setId(IdGenerator.newId());
@@ -86,6 +92,8 @@ public class ChannelController {
 		if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
 
 		channel.setId(response.getId());
+
+		broadcast(channel, new GenericSmpframe<Channel>(null, -1, channel));
 
 		return channel;
 	}

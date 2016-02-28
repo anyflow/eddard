@@ -22,14 +22,14 @@ public class UserGateway {
 		SELF = new UserGateway();
 	}
 
-	public void login(String userId, String deviceId) throws FaultException {
-		if (UserServer.SELF.get(userId) == null) { throw new FaultException(Fault.USER_002.replaceWith(userId)); }
+	public void login(String id, String deviceId) throws FaultException {
+		if (UserServer.SELF.get(id) == null) { throw new FaultException(Fault.USER_002.replaceWith(id)); }
 
 		List<Device> devices = DeviceController.SELF.get(deviceId);
 		if (devices == null
 				|| devices.size() <= 0) { throw new FaultException(Fault.DEVICE_002.replaceWith(deviceId)); }
 
-		List<String> deviceIds = ProfileServer.SELF.getDeviceIds(userId);
+		List<String> deviceIds = ProfileServer.SELF.getDeviceIds(id);
 
 		for (String item : deviceIds) {
 			if (DeviceController.SELF.get(item).isEmpty()) {
@@ -40,24 +40,37 @@ public class UserGateway {
 		}
 	}
 
-	public void logout(String userId) throws FaultException {
-		if (UserServer.SELF.get(userId) == null) { throw new FaultException(Fault.USER_002.replaceWith(userId)); }
+	public void logout(String id) throws FaultException {
+		if (UserServer.SELF.get(id) == null) { throw new FaultException(Fault.USER_002.replaceWith(id)); }
 
-		List<String> deviceIds = ProfileServer.SELF.getDeviceIds(userId);
+		List<String> deviceIds = ProfileServer.SELF.getDeviceIds(id);
 
 		for (String item : deviceIds) {
 			DeviceController.SELF.updateStatus(item, false);
 		}
 	}
 
-	public List<User> getFriends(String userId) throws FaultException {
-		User user = UserServer.SELF.get(userId);
-		if (user == null) { throw new FaultException(Fault.USER_002.replaceWith(userId)); }
+	public List<User> get(String... ids) throws FaultException {
+		List<User> ret = Lists.newArrayList();
+
+		for (String id : ids) {
+			User user = UserServer.SELF.get(id);
+			if (user == null) { throw new FaultException(Fault.USER_002.replaceWith(id)); }
+
+			ret.add(user);
+		}
+
+		return ret;
+	}
+
+	public List<User> getFriends(String id) throws FaultException {
+		List<User> users = get(id);
+		if (users == null || users.isEmpty()) { throw new FaultException(Fault.USER_002.replaceWith(id)); }
 
 		List<User> ret = Lists.newArrayList();
 
-		for (String id : user.getFriends()) {
-			User item = UserServer.SELF.get(id);
+		for (String friendId : users.get(0).getFriendIds()) {
+			User item = UserServer.SELF.get(friendId);
 			if (item == null) {
 				continue;
 			}

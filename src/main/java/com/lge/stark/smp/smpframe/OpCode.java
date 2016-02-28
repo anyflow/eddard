@@ -46,7 +46,9 @@ public enum OpCode {
 	FRIENDS_RETRIEVED(353, "Return of GET_FRIEND"), 
 	CHANNEL_CREATED(354, "Return of CREATE_CHANNEL"),
 	MESSAGE_CREATED(355, "Return of CREATE_MESSAGE"),
-	CHANNEL_LEFT(356, "A user left the channel");
+	CHANNEL_LEFT(356, "A user left the channel"),
+	
+	INVALID_OPCODE(999, "The Invalid OpCode");
 	
 	private static final Map<OpCode, Class<? extends Smpframe>> FRAMECLASS_MAPPER;
 

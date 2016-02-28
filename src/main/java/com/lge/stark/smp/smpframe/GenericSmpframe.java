@@ -12,7 +12,7 @@ public class GenericSmpframe<Model> extends Smpframe {
 	}
 
 	public GenericSmpframe(String sessionId, Integer smpframeId, Model model) {
-		super(OpCode.CLOSE_SESSION, sessionId, smpframeId);
+		super(OpCode.INVALID_OPCODE, sessionId, smpframeId);
 
 		this.model = model;
 	}

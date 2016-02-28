@@ -11,7 +11,7 @@ public class User extends Jsonizable {
 	private String id;
 	private String name;
 	private String description;
-	private List<String> friends;
+	private List<String> friendIds;
 	private Date createDate;
 
 	public String getId() {
@@ -38,12 +38,12 @@ public class User extends Jsonizable {
 		this.description = description;
 	}
 
-	public List<String> getFriends() {
-		return friends;
+	public List<String> getFriendIds() {
+		return friendIds;
 	}
 
-	public void setFriends(List<String> friends) {
-		this.friends = friends;
+	public void setFriendIds(List<String> friendIds) {
+		this.friendIds = friendIds;
 	}
 
 	@JsonIgnore
