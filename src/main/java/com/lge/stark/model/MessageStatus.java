@@ -97,6 +97,10 @@ public class MessageStatus extends Jsonizable {
 	}
 
 	public String getId() {
+		return getId(messageId, deviceId);
+	}
+
+	public static String getId(String messageId, String deviceId) {
 		JSONObject obj = new JSONObject();
 
 		try {

@@ -7,6 +7,7 @@ import com.lge.stark.Settings;
 import com.lge.stark.controller.ChannelController;
 import com.lge.stark.controller.DeviceController;
 import com.lge.stark.controller.MessageController;
+import com.lge.stark.controller.MessageStatusController;
 import com.lge.stark.smp.session.Session;
 import com.lge.stark.smp.session.SessionNexus;
 import com.lge.stark.smp.smpframe.CloseSession;
@@ -15,6 +16,7 @@ import com.lge.stark.smp.smpframe.CreateMessage;
 import com.lge.stark.smp.smpframe.DeleteDevice;
 import com.lge.stark.smp.smpframe.IsAlive;
 import com.lge.stark.smp.smpframe.LeaveChannel;
+import com.lge.stark.smp.smpframe.MessageReceived;
 import com.lge.stark.smp.smpframe.OpCode;
 import com.lge.stark.smp.smpframe.RegisterDevice;
 import com.lge.stark.smp.smpframe.ReturnOk;
@@ -179,6 +181,13 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 			protected void smpframeReceived(ChannelHandlerContext ctx, LeaveChannel smpframe, Session session)
 					throws FaultException {
 				ChannelController.SELF.leave(smpframe.channelId(), smpframe.userId());
+			}
+		});
+		ctx.pipeline().addLast(new SmpframeHandler<MessageReceived>() {
+			@Override
+			protected void smpframeReceived(ChannelHandlerContext ctx, MessageReceived smpframe, Session session)
+					throws FaultException {
+				MessageStatusController.SELF.updateToRead(smpframe.messageId(), session.deviceId());
 			}
 		});
 	}

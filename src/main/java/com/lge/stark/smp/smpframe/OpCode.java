@@ -42,7 +42,8 @@ public enum OpCode {
 	CREATE_CHANNEL(304, "Create a channel"),
 	CREATE_MESSAGE(305, "Create a message"),
 	LEAVE_CHANNEL(306, "Leave a channel"),
-	
+	MESSAGE_RECEIVED(307, "A message received"),
+
 	FRIENDS_RETRIEVED(353, "Return of GET_FRIEND"), 
 	CHANNEL_CREATED(354, "Return of CREATE_CHANNEL"),
 	MESSAGE_CREATED(355, "Return of CREATE_MESSAGE"),
@@ -70,6 +71,7 @@ public enum OpCode {
 		FRAMECLASS_MAPPER.put(CREATE_CHANNEL, CreateChannel.class);
 		FRAMECLASS_MAPPER.put(CREATE_MESSAGE, CreateMessage.class);
 		FRAMECLASS_MAPPER.put(LEAVE_CHANNEL, LeaveChannel.class);
+		FRAMECLASS_MAPPER.put(MESSAGE_RECEIVED, MessageReceived.class);
 	}
 
 	public static OpCode from(int id) {

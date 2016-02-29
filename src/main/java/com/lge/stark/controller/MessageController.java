@@ -3,11 +3,11 @@ package com.lge.stark.controller;
 import java.util.Date;
 import java.util.List;
 
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 
@@ -19,7 +19,7 @@ import com.lge.stark.model.Channel;
 import com.lge.stark.model.Device;
 import com.lge.stark.model.Fault;
 import com.lge.stark.model.Message;
-import com.lge.stark.model.MessageStatus;
+import com.lge.stark.model.MessageStatus.Status;
 import com.lge.stark.smp.smpframe.GenericSmpframe;
 
 public class MessageController {
@@ -33,7 +33,6 @@ public class MessageController {
 	}
 
 	public Message create(String channelId, String text, String creatorId) throws FaultException {
-
 		Channel channel = ChannelController.SELF.get(channelId);
 
 		if (channel == null) { throw new FaultException(Fault.CHANNEL_001); }
@@ -44,7 +43,7 @@ public class MessageController {
 		ret.setCreatorId(creatorId);
 		ret.setText(text);
 		ret.setChannelId(channelId);
-		ret.setUnreadCount(channel.getUserIds().size() - 1);
+		ret.setUnreadCount(channel.getUserIds().size());
 
 		Client client = ElasticsearchGateway.getClient();
 
@@ -65,29 +64,39 @@ public class MessageController {
 		List<Device> devices = ChannelController.SELF.broadcast(channel, new GenericSmpframe<Message>(null, -1, ret));
 
 		for (Device device : devices) {
-			MessageStatus ms = new MessageStatus();
-
-			ms.setMessageId(ret.getId());
-			ms.setDeviceId(device.getId());
-			ms.setStatus(MessageStatus.Status.PEND);
-			ms.setCreateDate(new Date());
-
-			response = client.prepareIndex("stark", "messageStatus", ms.getId()).setSource(ms.toJsonStringWithout("id"))
-					.execute().actionGet();
-
-			if (response.isCreated() == false) { throw new FaultException(Fault.COMMON_000); }
+			MessageStatusController.SELF.create(client, ret.getId(), device.getId(), Status.SENT);
 		}
 
 		return ret;
 	}
 
-	public void setUnreadCount(String messageId, int unreadCount) throws FaultException {
+	public Message get(String id) throws FaultException {
 		Client client = ElasticsearchGateway.getClient();
 
+		return get(client, id);
+	}
+
+	public Message get(Client client, String id) throws FaultException {
+		GetResponse response;
 		try {
-			client.update(new UpdateRequest("stark", "message", messageId)
-					.doc(XContentFactory.jsonBuilder().startObject().field("unreadCount", unreadCount).endObject()))
-					.get();
+			response = client.prepareGet("stark", "message", id).execute().actionGet();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new FaultException(Fault.COMMON_000);
+		}
+
+		if (response.isExists() == false) { return null; }
+
+		Message ret = Jsonizable.read(response.getSourceAsString(), Message.class);
+		ret.setId(id);
+
+		return ret;
+	}
+
+	public void update(Client client, Message message) throws FaultException {
+		try {
+			client.update(new UpdateRequest("stark", "message", message.getId()).doc(message.toJsonString())).get();
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -95,11 +104,11 @@ public class MessageController {
 		}
 	}
 
-	public List<Message> getMessageAll(String id) throws FaultException {
+	public List<Message> getMessages(String channelId) throws FaultException {
 		SearchResponse response;
 		try {
 			response = ElasticsearchGateway.getClient().prepareSearch("stark").setTypes("message")
-					.setQuery(QueryBuilders.matchQuery("channelId", id)).execute().actionGet();
+					.setQuery(QueryBuilders.matchQuery("channelId", channelId)).execute().actionGet();
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(), e);

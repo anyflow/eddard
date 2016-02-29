@@ -29,7 +29,7 @@ public class GetMessage extends HttpRequestHandler {
 				return Fault.CHANNEL_001.replaceWith(id).toJsonString();
 			}
 
-			List<Message> ret = MessageController.SELF.getMessageAll(id);
+			List<Message> ret = MessageController.SELF.getMessages(id);
 
 			return Jsonizable.toJsonString(ret);
 		}
