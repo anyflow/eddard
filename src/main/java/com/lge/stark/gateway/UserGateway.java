@@ -22,8 +22,9 @@ public class UserGateway {
 		SELF = new UserGateway();
 	}
 
-	public void login(String id, String deviceId) throws FaultException {
-		if (UserServer.SELF.get(id) == null) { throw new FaultException(Fault.USER_002.replaceWith(id)); }
+	public User login(String id, String deviceId) throws FaultException {
+		User ret = UserServer.SELF.get(id);
+		if (ret == null) { throw new FaultException(Fault.USER_002.replaceWith(id)); }
 
 		List<Device> devices = DeviceController.SELF.get(deviceId);
 		if (devices == null
@@ -38,6 +39,8 @@ public class UserGateway {
 
 			DeviceController.SELF.updateStatus(item, item.equals(deviceId));
 		}
+
+		return ret;
 	}
 
 	public void logout(String id) throws FaultException {

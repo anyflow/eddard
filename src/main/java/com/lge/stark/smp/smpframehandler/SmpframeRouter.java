@@ -115,6 +115,7 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
 		ctx.pipeline().addLast(new InitializeHandler());
 		ctx.pipeline().addLast(new RetrieveFriendsHandler());
+		ctx.pipeline().addLast(new GetUsersHandler());
 
 		ctx.pipeline().addLast(new SmpframeHandler<IsAlive>() {
 			@Override
