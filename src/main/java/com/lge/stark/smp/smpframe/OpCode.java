@@ -49,6 +49,7 @@ public enum OpCode {
 	CHANNEL_CREATED(354, "Return of CREATE_CHANNEL"),
 	MESSAGE_CREATED(355, "Return of CREATE_MESSAGE"),
 	CHANNEL_LEFT(356, "A user left the channel"),
+	UNREAD_COUNT_CHANGED(357, "Unread count changed"),
 	
 	INVALID_OPCODE(999, "The Invalid OpCode");
 	
