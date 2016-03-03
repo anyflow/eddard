@@ -7,10 +7,6 @@ public class MessageReceived extends Smpframe {
 	@JsonProperty("messageId")
 	String messageId;
 
-	public MessageReceived() {
-		super();
-	}
-
 	public String messageId() {
 		return messageId;
 	}

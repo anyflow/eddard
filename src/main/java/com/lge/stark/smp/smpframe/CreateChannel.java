@@ -18,10 +18,6 @@ public class CreateChannel extends Smpframe {
 	@JsonProperty("secretKey")
 	String secretKey;
 
-	public CreateChannel() {
-		super();
-	}
-
 	public String name() {
 		return name;
 	}

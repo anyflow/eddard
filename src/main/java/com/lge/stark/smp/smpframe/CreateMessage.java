@@ -13,10 +13,6 @@ public class CreateMessage extends Smpframe {
 	@JsonProperty("text")
 	String text;
 
-	public CreateMessage() {
-		super();
-	}
-
 	public String channelId() {
 		return channelId;
 	}

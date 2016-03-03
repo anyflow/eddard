@@ -9,7 +9,6 @@ import com.lge.stark.gateway.UserGateway;
 import com.lge.stark.model.User;
 import com.lge.stark.smp.session.Session;
 import com.lge.stark.smp.smpframe.GetUsers;
-import com.lge.stark.smp.smpframe.ModelResponse;
 import com.lge.stark.smp.smpframe.OpCode;
 import com.lge.stark.smp.smpframe.Smpframe;
 
@@ -32,7 +31,6 @@ public class GetUsersHandler extends SmpframeHandler<GetUsers> {
 	}
 
 	@SuppressWarnings("serial")
-	@ModelResponse(name = "users", opcode = OpCode.USERS_RETRIEVED)
 	class Users extends ArrayList<User> {
 		Users(List<User> users) {
 			this.addAll(users);

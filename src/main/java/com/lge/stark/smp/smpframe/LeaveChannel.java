@@ -10,10 +10,6 @@ public class LeaveChannel extends Smpframe {
 	@JsonProperty("userId")
 	String userId;
 
-	public LeaveChannel() {
-		super();
-	}
-
 	public String channelId() {
 		return channelId;
 	}

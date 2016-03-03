@@ -17,12 +17,6 @@ public class RegisterDevice extends Smpframe {
 	@JsonProperty("isActive")
 	boolean isActive;
 
-	public RegisterDevice() {
-		super();
-
-		opcode(OpCode.REGISTER_DEVICE);
-	}
-
 	public String deviceId() {
 		return deviceId;
 	}
@@ -37,21 +31,5 @@ public class RegisterDevice extends Smpframe {
 
 	public boolean isActive() {
 		return isActive;
-	}
-
-	public void deviceId(String deviceId) {
-		this.deviceId = deviceId;
-	}
-
-	public void receiverId(String receiverId) {
-		this.receiverId = receiverId;
-	}
-
-	public void pushType(PushType pushType) {
-		this.pushType = pushType;
-	}
-
-	public void isActive(boolean isActive) {
-		this.isActive = isActive;
 	}
 }
