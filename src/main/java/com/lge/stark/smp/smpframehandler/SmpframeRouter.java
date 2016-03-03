@@ -93,10 +93,6 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 		Session session = SessionNexus.SELF.getByChannel(ctx.channel());
 		if (session == null) { return; }
 
-		logger.error("===== Disposed session remoteAddress : "
-				+ session.channelHandlerContext().channel().remoteAddress() + " =====");
-		logger.error("===== Disposed session id : " + session.id() + " =====");
-
 		SessionNexus.SELF.dispose(session);
 	}
 

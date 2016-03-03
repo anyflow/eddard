@@ -19,7 +19,6 @@ import io.netty.channel.Channel;
 
 public final class SessionNexus {
 
-	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(SessionNexus.class);
 	public static final SessionNexus SELF;
 
@@ -98,6 +97,9 @@ public final class SessionNexus {
 				channelMap.values().remove(session);
 			}
 		}
+
+		logger.error("A session Disposed. Session ID|remoteAddress : {}|{}", session.id(),
+				session.channelHandlerContext().channel().remoteAddress());
 	}
 
 	public Session getByChannel(Channel channel) {
