@@ -23,6 +23,12 @@ public abstract class Smpframe extends com.lge.stark.Jsonizable {
 	public Smpframe() {
 	}
 
+	public Smpframe(OpCode opcode) {
+		this.opcode = opcode;
+		this.sessionId = null;
+		this.id = null;
+	}
+
 	public Smpframe(OpCode opcode, String sessionId, Integer pushframeId) {
 		this.opcode = opcode;
 		this.sessionId = sessionId;

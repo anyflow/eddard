@@ -11,6 +11,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.lge.stark.FaultException;
 import com.lge.stark.Jsonizable;
@@ -20,7 +21,8 @@ import com.lge.stark.model.Device;
 import com.lge.stark.model.Fault;
 import com.lge.stark.model.Message;
 import com.lge.stark.model.MessageStatus.Status;
-import com.lge.stark.smp.smpframe.GenericSmpframe;
+import com.lge.stark.smp.smpframe.OpCode;
+import com.lge.stark.smp.smpframe.Smpframe;
 
 public class MessageController {
 
@@ -37,7 +39,7 @@ public class MessageController {
 
 		if (channel == null) { throw new FaultException(Fault.CHANNEL_001); }
 
-		Message ret = new Message();
+		final Message ret = new Message();
 
 		ret.setCreateDate(new Date());
 		ret.setCreatorId(creatorId);
@@ -61,7 +63,15 @@ public class MessageController {
 
 		ret.setId(response.getId());
 
-		List<Device> devices = ChannelController.SELF.broadcast(channel, new GenericSmpframe<Message>(null, -1, ret));
+		List<Device> devices = ChannelController.SELF.broadcast(channel, new Smpframe(OpCode.MESSAGE_CREATED) {
+			@JsonProperty("message")
+			Message item = ret;
+
+			@Override
+			public boolean isResponseRequired() {
+				return false;
+			}
+		});
 
 		for (Device device : devices) {
 			MessageStatusController.SELF.create(client, ret.getId(), device.getId(), Status.SENT);

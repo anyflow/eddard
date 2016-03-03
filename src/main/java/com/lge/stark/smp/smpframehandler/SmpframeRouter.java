@@ -7,7 +7,6 @@ import com.lge.stark.Settings;
 import com.lge.stark.controller.ChannelController;
 import com.lge.stark.controller.DeviceController;
 import com.lge.stark.controller.MessageController;
-import com.lge.stark.controller.MessageStatusController;
 import com.lge.stark.smp.session.Session;
 import com.lge.stark.smp.session.SessionNexus;
 import com.lge.stark.smp.smpframe.CloseSession;
@@ -16,7 +15,6 @@ import com.lge.stark.smp.smpframe.CreateMessage;
 import com.lge.stark.smp.smpframe.DeleteDevice;
 import com.lge.stark.smp.smpframe.IsAlive;
 import com.lge.stark.smp.smpframe.LeaveChannel;
-import com.lge.stark.smp.smpframe.MessageReceived;
 import com.lge.stark.smp.smpframe.OpCode;
 import com.lge.stark.smp.smpframe.RegisterDevice;
 import com.lge.stark.smp.smpframe.ReturnOk;
@@ -61,7 +59,7 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 	@Override
 	protected void decode(ChannelHandlerContext ctx, WebSocketFrame msg, List<Object> out) throws Exception {
 
-		Smpframe errorInvalidSmpframeFormat = new Smpframe(OpCode.ERROR_INVALID_SMPFRAME_FORMAT, null, -1) {
+		Smpframe errorInvalidSmpframeFormat = new Smpframe(OpCode.ERROR_INVALID_SMPFRAME_FORMAT) {
 			@Override
 			public boolean isResponseRequired() {
 				return false;
@@ -73,8 +71,7 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 					.addListener(new ChannelFutureListener() {
 						@Override
 						public void operationComplete(ChannelFuture future) throws Exception {
-							logger.debug("None session sending finished. sessionID|smpframe - {}|{}", null,
-									msg.toString());
+							logger.debug("None session sending finished. smpframe - {}", msg.toString());
 						}
 					}).addListener(ChannelFutureListener.CLOSE);
 			return;
@@ -92,8 +89,7 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 					.addListener(new ChannelFutureListener() {
 						@Override
 						public void operationComplete(ChannelFuture future) throws Exception {
-							logger.debug("None session sending finished. sessionID|smpframe - {}|{}", null,
-									msg.toString());
+							logger.debug("None session sending finished. smpframe - {}", msg.toString());
 						}
 					}).addListener(ChannelFutureListener.CLOSE);
 		}
@@ -116,6 +112,7 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 		ctx.pipeline().addLast(new InitializeHandler());
 		ctx.pipeline().addLast(new RetrieveFriendsHandler());
 		ctx.pipeline().addLast(new GetUsersHandler());
+		ctx.pipeline().addLast(new MessageReceivedHandler());
 
 		ctx.pipeline().addLast(new SmpframeHandler<IsAlive>() {
 			@Override
@@ -182,13 +179,6 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 			protected void smpframeReceived(ChannelHandlerContext ctx, LeaveChannel smpframe, Session session)
 					throws FaultException {
 				ChannelController.SELF.leave(smpframe.channelId(), smpframe.userId());
-			}
-		});
-		ctx.pipeline().addLast(new SmpframeHandler<MessageReceived>() {
-			@Override
-			protected void smpframeReceived(ChannelHandlerContext ctx, MessageReceived smpframe, Session session)
-					throws FaultException {
-				MessageStatusController.SELF.updateToRead(smpframe.messageId(), session.deviceId());
 			}
 		});
 	}

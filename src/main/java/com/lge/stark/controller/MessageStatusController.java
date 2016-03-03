@@ -7,16 +7,12 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lge.stark.FaultException;
 import com.lge.stark.Jsonizable;
 import com.lge.stark.gateway.ElasticsearchGateway;
 import com.lge.stark.model.Fault;
-import com.lge.stark.model.Message;
 import com.lge.stark.model.MessageStatus;
 import com.lge.stark.model.MessageStatus.Status;
-import com.lge.stark.smp.smpframe.OpCode;
-import com.lge.stark.smp.smpframe.Smpframe;
 
 public class MessageStatusController {
 
@@ -87,35 +83,5 @@ public class MessageStatusController {
 			logger.error(e.getMessage(), e);
 			throw new FaultException(Fault.COMMON_000);
 		}
-	}
-
-	public void updateToRead(String messageId, String deviceId) throws FaultException {
-		Client client = ElasticsearchGateway.getClient();
-
-		MessageStatus ms = get(client, messageId, deviceId);
-
-		ms.setStatus(Status.READ);
-		ms.setReadDate(new Date());
-
-		update(client, ms);
-
-		final Message message = MessageController.SELF.get(client, messageId);
-
-		message.setUnreadCount(message.getUnreadCount() - 1);
-
-		MessageController.SELF.update(client, message);
-
-		ChannelController.SELF.broadcast(message.getChannelId(), new Smpframe(OpCode.UNREAD_COUNT_CHANGED, null, -1) {
-			@JsonProperty
-			private String channelId = message.getChannelId();
-
-			@JsonProperty
-			private String messageId = message.getId();
-
-			@Override
-			public boolean isResponseRequired() {
-				return false;
-			}
-		});
 	}
 }

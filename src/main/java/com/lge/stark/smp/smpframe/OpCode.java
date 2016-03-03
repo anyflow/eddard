@@ -59,8 +59,6 @@ public enum OpCode {
 		FRAMECLASS_MAPPER = Maps.newHashMap();
 
 		FRAMECLASS_MAPPER.put(INITIALIZE, Initialize.class);
-		FRAMECLASS_MAPPER.put(SET_HEARTBEAT_RATE, SetHeartbeatRate.class);
-		FRAMECLASS_MAPPER.put(REDIRECT, Redirect.class);
 		FRAMECLASS_MAPPER.put(CLOSE_SESSION, CloseSession.class);
 		FRAMECLASS_MAPPER.put(IS_ALIVE, IsAlive.class);
 		

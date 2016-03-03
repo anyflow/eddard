@@ -168,6 +168,13 @@ public class Session extends Jsonizable implements Comparable<Session> {
 
 	public void send(final Smpframe message, ResponseArrivedListener responseArrivedListener,
 			final ChannelFutureListener operationCompleteListener) {
+
+		message.sessionId(this.id());
+
+		if (message.id() == null) {
+			message.id(this.nextPushframeId());
+		}
+
 		try {
 			logger.debug("Session.send() started. sessionID|smpframe - {}|{}", this.id(), message.toString());
 

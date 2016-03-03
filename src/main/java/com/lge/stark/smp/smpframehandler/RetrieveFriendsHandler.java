@@ -3,14 +3,15 @@ package com.lge.stark.smp.smpframehandler;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lge.stark.FaultException;
 import com.lge.stark.gateway.UserGateway;
 import com.lge.stark.model.User;
 import com.lge.stark.smp.session.Session;
-import com.lge.stark.smp.smpframe.GenericSmpframe;
 import com.lge.stark.smp.smpframe.ModelResponse;
 import com.lge.stark.smp.smpframe.OpCode;
 import com.lge.stark.smp.smpframe.RetrieveFriends;
+import com.lge.stark.smp.smpframe.Smpframe;
 
 import io.netty.channel.ChannelHandlerContext;
 
@@ -24,7 +25,15 @@ public class RetrieveFriendsHandler extends SmpframeHandler<RetrieveFriends> {
 			throws FaultException {
 		List<User> users = UserGateway.SELF.getFriends(smpframe.userId());
 
-		session.send(new GenericSmpframe<Users>(session.id(), smpframe.responseSmpframeId(), new Users(users)));
+		session.send(new Smpframe(OpCode.USERS_RETRIEVED, null, smpframe.responseSmpframeId()) {
+			@JsonProperty("users")
+			Users item = new Users(users);
+
+			@Override
+			public boolean isResponseRequired() {
+				return false;
+			}
+		});
 	}
 
 	@SuppressWarnings("serial")

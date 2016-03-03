@@ -9,6 +9,7 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.inject.internal.Lists;
 import com.lge.stark.FaultException;
 import com.lge.stark.IdGenerator;
@@ -21,8 +22,7 @@ import com.lge.stark.model.Device;
 import com.lge.stark.model.Fault;
 import com.lge.stark.smp.session.Session;
 import com.lge.stark.smp.session.SessionNexus;
-import com.lge.stark.smp.smpframe.ChannelLeft;
-import com.lge.stark.smp.smpframe.GenericSmpframe;
+import com.lge.stark.smp.smpframe.OpCode;
 import com.lge.stark.smp.smpframe.Smpframe;
 
 public class ChannelController {
@@ -71,7 +71,7 @@ public class ChannelController {
 		UserGateway.SELF.get(inviteeIds);
 		UserGateway.SELF.get(inviterId);
 
-		Channel channel = new Channel();
+		final Channel channel = new Channel();
 
 		channel.setId(IdGenerator.newId());
 		channel.setName(name);
@@ -93,7 +93,15 @@ public class ChannelController {
 
 		channel.setId(response.getId());
 
-		broadcast(channel, new GenericSmpframe<Channel>(null, -1, channel));
+		broadcast(channel, new Smpframe(OpCode.CHANNEL_CREATED) {
+			@JsonProperty("channel")
+			Channel item = channel;
+
+			@Override
+			public boolean isResponseRequired() {
+				return false;
+			}
+		});
 
 		return channel;
 	}
@@ -156,17 +164,29 @@ public class ChannelController {
 		return ret;
 	}
 
-	public void leave(String id, String userId) throws FaultException {
+	public void leave(String id, final String userId) throws FaultException {
 		Client client = ElasticsearchGateway.getClient();
 
-		Channel channel = get(id);
+		final Channel channel = get(id);
 
 		if (channel == null) {
 			logger.error("Channel({}) is not found!", id);
 			return;
 		}
 
-		broadcast(channel, new ChannelLeft(null, -1, channel.getId(), userId));
+		broadcast(channel, new Smpframe(OpCode.CHANNEL_LEFT) {
+			@JsonProperty("channelId")
+			String channelId = channel.getId();
+
+			@JsonProperty("userId")
+			String uId = userId;
+
+			@Override
+			public boolean isResponseRequired() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});
 
 		try {
 			if (channel.getUserIds().size() > 0) {
