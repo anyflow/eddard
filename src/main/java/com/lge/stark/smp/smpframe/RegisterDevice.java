@@ -54,9 +54,4 @@ public class RegisterDevice extends Smpframe {
 	public void isActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-
-	@Override
-	public boolean isResponseRequired() {
-		return true;
-	}
 }

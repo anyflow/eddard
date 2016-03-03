@@ -14,9 +14,4 @@ public class MessageReceived extends Smpframe {
 	public String messageId() {
 		return messageId;
 	}
-
-	@Override
-	public boolean isResponseRequired() {
-		return false;
-	}
 }

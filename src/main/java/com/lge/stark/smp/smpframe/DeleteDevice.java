@@ -20,9 +20,4 @@ public class DeleteDevice extends Smpframe {
 	public void deviceId(String deviceId) {
 		this.deviceId = deviceId;
 	}
-
-	@Override
-	public boolean isResponseRequired() {
-		return true;
-	}
 }

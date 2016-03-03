@@ -74,9 +74,6 @@ public abstract class Smpframe extends com.lge.stark.Jsonizable {
 		return opcode.isReturnType();
 	}
 
-	@JsonIgnore(value = true)
-	public abstract boolean isResponseRequired();
-
 	public static Smpframe createFrom(String json) throws JsonProcessingException, IOException {
 		return createFrom(json, new ObjectMapper());
 	}
@@ -95,10 +92,6 @@ public abstract class Smpframe extends com.lge.stark.Jsonizable {
 	public static Smpframe createDefault(OpCode opcode, String sessionId, int smpframeId,
 			final boolean isResponseRequired) {
 		return new Smpframe(opcode, sessionId, smpframeId) {
-			@Override
-			public boolean isResponseRequired() {
-				return isResponseRequired;
-			}
 		};
 	}
 }

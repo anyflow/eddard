@@ -38,11 +38,6 @@ public class InitializeHandler extends SmpframeHandler<Initialize> {
 		session.send(new Smpframe(OpCode.SET_HEARTBEAT_RATE, session.id(), smpframe.responseSmpframeId()) {
 			@JsonProperty("heartbeatRate")
 			private int heartbeatRate = 60 * 30; // second unit
-
-			@Override
-			public boolean isResponseRequired() {
-				return false;
-			}
 		});
 	}
 }

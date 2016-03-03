@@ -59,21 +59,14 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 	@Override
 	protected void decode(ChannelHandlerContext ctx, WebSocketFrame msg, List<Object> out) throws Exception {
 
-		Smpframe errorInvalidSmpframeFormat = new Smpframe(OpCode.ERROR_INVALID_SMPFRAME_FORMAT) {
-			@Override
-			public boolean isResponseRequired() {
-				return false;
-			}
-		};
-
 		if (msg instanceof TextWebSocketFrame == false) {
-			ctx.channel().writeAndFlush(new TextWebSocketFrame(errorInvalidSmpframeFormat.toJsonString()))
-					.addListener(new ChannelFutureListener() {
-						@Override
-						public void operationComplete(ChannelFuture future) throws Exception {
-							logger.debug("None session sending finished. smpframe - {}", msg.toString());
-						}
-					}).addListener(ChannelFutureListener.CLOSE);
+			ctx.channel().writeAndFlush(new TextWebSocketFrame((new Smpframe(OpCode.ERROR_INVALID_SMPFRAME_FORMAT) {
+			}).toJsonString())).addListener(new ChannelFutureListener() {
+				@Override
+				public void operationComplete(ChannelFuture future) throws Exception {
+					logger.debug("None session sending finished. smpframe - {}", msg.toString());
+				}
+			}).addListener(ChannelFutureListener.CLOSE);
 			return;
 		}
 
@@ -85,13 +78,13 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			ctx.channel().writeAndFlush(new TextWebSocketFrame(errorInvalidSmpframeFormat.toJsonString()))
-					.addListener(new ChannelFutureListener() {
-						@Override
-						public void operationComplete(ChannelFuture future) throws Exception {
-							logger.debug("None session sending finished. smpframe - {}", msg.toString());
-						}
-					}).addListener(ChannelFutureListener.CLOSE);
+			ctx.channel().writeAndFlush(new TextWebSocketFrame((new Smpframe(OpCode.ERROR_INVALID_SMPFRAME_FORMAT) {
+			}).toJsonString())).addListener(new ChannelFutureListener() {
+				@Override
+				public void operationComplete(ChannelFuture future) throws Exception {
+					logger.debug("None session sending finished. smpframe - {}", msg.toString());
+				}
+			}).addListener(ChannelFutureListener.CLOSE);
 		}
 	}
 

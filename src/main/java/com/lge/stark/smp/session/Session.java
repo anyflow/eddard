@@ -176,18 +176,17 @@ public class Session extends Jsonizable implements Comparable<Session> {
 		}
 
 		try {
-			logger.debug("Session.send() started. sessionID|smpframe - {}|{}", this.id(), message.toString());
-
 			if (responseArrivedListener != null) {
 				addListener(responseArrivedListener);
 			}
 
-			ChannelFuture cf = channelHandlerContext().writeAndFlush(new TextWebSocketFrame(message.toJsonString()));
+			ChannelFuture channelFuture = channelHandlerContext()
+					.writeAndFlush(new TextWebSocketFrame(message.toJsonString()));
 			if (operationCompleteListener != null) {
-				cf.addListener(operationCompleteListener);
+				channelFuture.addListener(operationCompleteListener);
 			}
 
-			logger.debug("Session.send() finished. sessionID|smpframe - {}|{}", this.id(), message.toString());
+			logger.debug("Sending finished|{}", message.toString());
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -237,7 +236,6 @@ public class Session extends Jsonizable implements Comparable<Session> {
 			}
 		}
 
-		logger.debug("responseArrived fired. requestSmpframeId|response - {}|{}", requestSmpFrameId,
-				response.toString());
+		logger.debug("responseArrived fired|{}", requestSmpFrameId, response.toString());
 	}
 }

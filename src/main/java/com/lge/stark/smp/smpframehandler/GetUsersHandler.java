@@ -28,11 +28,6 @@ public class GetUsersHandler extends SmpframeHandler<GetUsers> {
 		session.send(new Smpframe(OpCode.USERS_RETRIEVED, null, smpframe.responseSmpframeId()) {
 			@JsonProperty("users")
 			Users item = new Users(users);
-
-			@Override
-			public boolean isResponseRequired() {
-				return false;
-			}
 		});
 	}
 

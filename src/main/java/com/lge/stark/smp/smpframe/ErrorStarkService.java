@@ -37,9 +37,4 @@ public class ErrorStarkService extends Smpframe {
 	public void description(String description) {
 		this.description = description;
 	}
-
-	@Override
-	public boolean isResponseRequired() {
-		return false;
-	}
 }

@@ -9,11 +9,6 @@ public class GetUsers extends Smpframe {
 	@JsonProperty("userIds")
 	List<String> userIds;
 
-	@Override
-	public boolean isResponseRequired() {
-		return true;
-	}
-
 	public List<String> userIds() {
 		return userIds;
 	}

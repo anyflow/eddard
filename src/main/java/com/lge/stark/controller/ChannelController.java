@@ -96,11 +96,6 @@ public class ChannelController {
 		broadcast(channel, new Smpframe(OpCode.CHANNEL_CREATED) {
 			@JsonProperty("channel")
 			Channel item = channel;
-
-			@Override
-			public boolean isResponseRequired() {
-				return false;
-			}
 		});
 
 		return channel;
@@ -180,12 +175,6 @@ public class ChannelController {
 
 			@JsonProperty("userId")
 			String uId = userId;
-
-			@Override
-			public boolean isResponseRequired() {
-				// TODO Auto-generated method stub
-				return false;
-			}
 		});
 
 		try {

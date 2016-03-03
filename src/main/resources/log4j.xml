@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
-	threshold="debug">
+	threshold="${log.level}">
 
 	<!-- Async console appender -->
 	<appender name="ASYNC_CONSOLE" class="org.apache.log4j.AsyncAppender">
@@ -58,6 +58,10 @@
 		<level value="DEBUG" />
 		<appender-ref ref="ASYNC_APPLICATION" />
 	</logger>
+
+	<category name="org.elasticsearch">
+		<priority value="FATAL" />
+	</category>
 
 	<root>
 		<level value="${log.level}" />

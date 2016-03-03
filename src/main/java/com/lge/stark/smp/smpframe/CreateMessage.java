@@ -28,9 +28,4 @@ public class CreateMessage extends Smpframe {
 	public String text() {
 		return text;
 	}
-
-	@Override
-	public boolean isResponseRequired() {
-		return false;
-	}
 }

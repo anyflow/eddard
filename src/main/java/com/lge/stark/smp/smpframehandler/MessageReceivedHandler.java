@@ -49,11 +49,6 @@ public class MessageReceivedHandler extends SmpframeHandler<MessageReceived> {
 
 			@JsonProperty
 			private String messageId = message.getId();
-
-			@Override
-			public boolean isResponseRequired() {
-				return false;
-			}
 		});
 	}
 }

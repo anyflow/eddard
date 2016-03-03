@@ -36,9 +36,4 @@ public class Initialize extends Smpframe {
 	public void networkType(String networkType) {
 		this.networkType = networkType;
 	}
-
-	@Override
-	public boolean isResponseRequired() {
-		return true;
-	}
 }

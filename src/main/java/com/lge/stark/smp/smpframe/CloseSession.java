@@ -9,9 +9,4 @@ public class CloseSession extends Smpframe {
 	public CloseSession(String sessionId, Integer smpframeId) {
 		super(OpCode.CLOSE_SESSION, sessionId, smpframeId);
 	}
-
-	@Override
-	public boolean isResponseRequired() {
-		return false;
-	}
 }

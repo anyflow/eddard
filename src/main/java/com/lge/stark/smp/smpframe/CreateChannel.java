@@ -22,11 +22,6 @@ public class CreateChannel extends Smpframe {
 		super();
 	}
 
-	@Override
-	public boolean isResponseRequired() {
-		return true;
-	}
-
 	public String name() {
 		return name;
 	}

@@ -66,11 +66,6 @@ public class MessageController {
 		List<Device> devices = ChannelController.SELF.broadcast(channel, new Smpframe(OpCode.MESSAGE_CREATED) {
 			@JsonProperty("message")
 			Message item = ret;
-
-			@Override
-			public boolean isResponseRequired() {
-				return false;
-			}
 		});
 
 		for (Device device : devices) {

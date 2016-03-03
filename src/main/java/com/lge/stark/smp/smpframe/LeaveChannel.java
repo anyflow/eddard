@@ -14,11 +14,6 @@ public class LeaveChannel extends Smpframe {
 		super();
 	}
 
-	@Override
-	public boolean isResponseRequired() {
-		return false;
-	}
-
 	public String channelId() {
 		return channelId;
 	}
