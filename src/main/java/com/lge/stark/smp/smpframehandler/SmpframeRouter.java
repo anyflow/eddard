@@ -2,11 +2,13 @@ package com.lge.stark.smp.smpframehandler;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lge.stark.FaultException;
 import com.lge.stark.Settings;
 import com.lge.stark.controller.ChannelController;
 import com.lge.stark.controller.DeviceController;
 import com.lge.stark.controller.MessageController;
+import com.lge.stark.model.Message;
 import com.lge.stark.smp.session.Session;
 import com.lge.stark.smp.session.SessionNexus;
 import com.lge.stark.smp.smpframe.CloseSession;
@@ -17,6 +19,7 @@ import com.lge.stark.smp.smpframe.IsAlive;
 import com.lge.stark.smp.smpframe.LeaveChannel;
 import com.lge.stark.smp.smpframe.OpCode;
 import com.lge.stark.smp.smpframe.RegisterDevice;
+import com.lge.stark.smp.smpframe.RetrieveMessages;
 import com.lge.stark.smp.smpframe.ReturnOk;
 import com.lge.stark.smp.smpframe.Smpframe;
 import com.lge.stark.smp.smpframe.UpdateDeviceStatus;
@@ -168,6 +171,17 @@ public class SmpframeRouter extends WebsocketFrameHandler {
 			protected void smpframeReceived(ChannelHandlerContext ctx, LeaveChannel smpframe, Session session)
 					throws FaultException {
 				ChannelController.SELF.leave(smpframe.channelId(), smpframe.userId());
+			}
+		});
+		ctx.pipeline().addLast(new SmpframeHandler<RetrieveMessages>() {
+			@Override
+			protected void smpframeReceived(ChannelHandlerContext ctx, RetrieveMessages smpframe, Session session)
+					throws FaultException {
+
+				session.send(new Smpframe(OpCode.MESSAGES_RETRIEVED, session.id(), smpframe.responseSmpframeId()) {
+					@JsonProperty("messages")
+					List<Message> messages = MessageController.SELF.getMessages(smpframe.channelId());
+				});
 			}
 		});
 	}
