@@ -5,6 +5,6 @@ var Hello = React.createClass({
 });
 
 ReactDOM.render(
-  <Hello name="This is Stark Project Home!" />,
+  <Hello name="This is Stark Project Home." />,
   document.getElementById('container')
 );
